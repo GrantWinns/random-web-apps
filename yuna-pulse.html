@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuna Pulse — Employer Intelligence Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --stone-green: #115430;
+  --stone-green-90: rgba(17,84,48,0.9);
+  --stone-green-light: #1a6b3d;
+  --soft-beige: #F5F0ED;
+  --cotton-white: #FFFFFF;
+  --spring-green: #66BA24;
+  --spring-green-light: rgba(102,186,36,0.12);
+  --spring-green-glow: rgba(102,186,36,0.25);
+  --text-dark: #1a2e23;
+  --text-muted: #5c7268;
+  --text-light: rgba(255,255,255,0.7);
+  --border: rgba(17,84,48,0.08);
+  --shadow-sm: 0 1px 3px rgba(17,84,48,0.06);
+  --shadow-md: 0 4px 16px rgba(17,84,48,0.08);
+  --shadow-lg: 0 8px 32px rgba(17,84,48,0.1);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Tahoma', 'Segoe UI', sans-serif;
+  background: var(--soft-beige);
+  color: var(--text-dark);
+  min-height: 100vh;
+  letter-spacing: -0.01em;
+}
+
+/* ─── Sidebar ─── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--stone-green);
+  color: white;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-leaf {
+  width: 28px;
+  height: 28px;
+  background: var(--spring-green);
+  border-radius: 50% 50% 50% 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.logo-sub {
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 36px;
+  padding-left: 38px;
+}
+
+.nav-section {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.35);
+  margin: 24px 0 10px;
+  padding-left: 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 2px;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-item.active {
+  background: rgba(102,186,36,0.15);
+  color: white;
+  font-weight: 600;
+}
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; opacity: 0.8; }
+.nav-item.active .icon { opacity: 1; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.org-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.06);
+}
+
+.org-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--spring-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: white;
+}
+
+.org-name { font-size: 13px; font-weight: 600; }
+.org-plan { font-size: 11px; color: var(--text-light); }
+
+/* ─── Main Content ─── */
+.main {
+  flex: 1;
+  margin-left: 260px;
+  padding: 32px 40px 60px;
+  max-width: 1400px;
+}
+
+/* ─── Header ─── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.header-left h1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--stone-green);
+}
+
+.header-left p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: white;
+  font-size: 13px;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.btn-export {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: white;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-export:hover { border-color: var(--stone-green); color: var(--stone-green); }
+
+.btn-primary {
+  padding: 8px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--stone-green);
+  font-size: 13px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary:hover { background: var(--stone-green-light); }
+
+/* ─── KPI Strip ─── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.kpi-card:hover { box-shadow: var(--shadow-md); }
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.kpi-card.accent::before { background: var(--spring-green); }
+
+.kpi-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kpi-value {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--stone-green);
+  line-height: 1;
+}
+
+.kpi-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12.5px;
+}
+
+.kpi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.kpi-badge.up { background: var(--spring-green-light); color: #2d7a0e; }
+.kpi-badge.down { background: rgba(220,53,69,0.1); color: #c0392b; }
+.kpi-badge.neutral { background: rgba(17,84,48,0.06); color: var(--text-muted); }
+
+.kpi-benchmark {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ─── Charts Row ─── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--stone-green);
+}
+
+.card-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.pill-group {
+  display: flex;
+  gap: 4px;
+}
+
+.pill {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pill.active {
+  background: var(--stone-green);
+  color: white;
+  border-color: var(--stone-green);
+}
+
+/* ─── SVG Chart Styles ─── */
+.chart-container { width: 100%; }
+
+.chart-container svg { width: 100%; display: block; }
+
+.grid-line { stroke: rgba(17,84,48,0.06); stroke-width: 1; }
+.axis-label { fill: #8a9e92; font-size: 11px; font-family: Tahoma, sans-serif; }
+.chart-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.chart-area { opacity: 0.12; }
+.chart-dot { stroke: white; stroke-width: 2; }
+
+/* ─── Engagement Funnel ─── */
+.funnel { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+
+.funnel-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.funnel-bar-wrap {
+  flex: 1;
+  height: 36px;
+  background: var(--soft-beige);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.funnel-bar {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+
+.funnel-bar.green { background: linear-gradient(90deg, var(--stone-green), var(--stone-green-light)); }
+.funnel-bar.light { background: linear-gradient(90deg, var(--spring-green), #7ecc42); }
+
+.funnel-label {
+  width: 100px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.funnel-val {
+  width: 52px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--stone-green);
+  flex-shrink: 0;
+}
+
+/* ─── Topics Section ─── */
+.topics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.topic-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.topic-bars { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+
+.topic-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topic-name {
+  width: 120px;
+  font-size: 13px;
+  color: var(--text-dark);
+  flex-shrink: 0;
+}
+
+.topic-bar-bg {
+  flex: 1;
+  height: 24px;
+  background: var(--soft-beige);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.topic-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: var(--stone-green);
+  transition: width 1s ease;
+}
+.topic-bar-fill.accent { background: var(--spring-green); }
+
+.topic-pct {
+  width: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--stone-green);
+  text-align: right;
+}
+
+.topic-change {
+  width: 50px;
+  font-size: 11px;
+  text-align: right;
+}
+.topic-change.up { color: #c0392b; }
+.topic-change.down { color: #2d7a0e; }
+.topic-change.flat { color: var(--text-muted); }
+
+/* ─── Heatmap ─── */
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: 140px repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.heatmap-header {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.heatmap-row-label {
+  font-size: 12px;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1.6;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: white;
+  min-height: 28px;
+  transition: transform 0.15s;
+  cursor: default;
+}
+.heatmap-cell:hover { transform: scale(1.08); }
+
+/* Heatmap intensity */
+.heat-0 { background: rgba(17,84,48,0.04); color: var(--text-muted); }
+.heat-1 { background: rgba(17,84,48,0.15); color: var(--stone-green); }
+.heat-2 { background: rgba(17,84,48,0.3); color: white; }
+.heat-3 { background: rgba(17,84,48,0.5); color: white; }
+.heat-4 { background: rgba(17,84,48,0.7); color: white; }
+.heat-5 { background: var(--stone-green); color: white; }
+
+/* ─── Bottom Row ─── */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ─── Availability Chart ─── */
+.avail-grid {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 2px;
+  margin-top: 16px;
+}
+
+.avail-bar {
+  border-radius: 3px 3px 0 0;
+  background: var(--stone-green);
+  transition: height 0.8s ease;
+  min-height: 2px;
+}
+
+.avail-labels {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.avail-label {
+  font-size: 8.5px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.avail-stat-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.avail-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.avail-stat-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--stone-green);
+  margin-top: 2px;
+}
+
+/* ─── Risk Tiers ─── */
+.risk-tiers { margin-top: 16px; }
+
+.risk-bar-stack {
+  display: flex;
+  height: 40px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.risk-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  transition: width 1s ease;
+}
+.risk-low { background: #8cc63f; }
+.risk-mod { background: #e8a838; }
+.risk-elev { background: #d35a4a; }
+
+.risk-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.risk-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.risk-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.risk-name { font-size: 13px; color: var(--text-dark); }
+.risk-pct { font-size: 13px; font-weight: 600; color: var(--stone-green); }
+.risk-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+
+/* ─── Escalation Banner ─── */
+.escalation-banner {
+  margin-top: 28px;
+  background: white;
+  border-radius: var(--radius);
+  padding: 22px 28px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 4px solid var(--spring-green);
+}
+
+.esc-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.esc-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--spring-green-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.esc-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--stone-green);
+}
+
+.esc-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.esc-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.esc-stat { text-align: center; }
+
+.esc-stat-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--stone-green);
+}
+
+.esc-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.3s; }
+.delay-6 { animation-delay: 0.4s; }
+.delay-7 { animation-delay: 0.5s; }
+.delay-8 { animation-delay: 0.6s; }
+
+/* ─── Responsive ─── */
+@media (max-width: 1200px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+  .topics-grid { grid-template-columns: 1fr; }
+  .bottom-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo">
+      <div class="logo-leaf">🍃</div>
+      yuna
+    </div>
+    <div class="logo-sub">Pulse</div>
+
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active">
+      <span class="icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item">
+      <span class="icon">📈</span> Trends
+    </div>
+    <div class="nav-item">
+      <span class="icon">👥</span> Population
+    </div>
+
+    <div class="nav-section">Intelligence</div>
+    <div class="nav-item">
+      <span class="icon">🧠</span> Topic analysis
+    </div>
+    <div class="nav-item">
+      <span class="icon">🔔</span> Alerts
+    </div>
+    <div class="nav-item">
+      <span class="icon">🛡️</span> Escalations
+    </div>
+
+    <div class="nav-section">Reports</div>
+    <div class="nav-item">
+      <span class="icon">📄</span> Quarterly report
+    </div>
+    <div class="nav-item">
+      <span class="icon">⬇️</span> Export data
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="org-badge">
+        <div class="org-avatar">AC</div>
+        <div>
+          <div class="org-name">Acrisure</div>
+          <div class="org-plan">Enterprise · 2,340 employees</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Header -->
+    <div class="header animate-in delay-1">
+      <div class="header-left">
+        <h1>Workforce mental health</h1>
+        <p>Real-time intelligence across 2,340 enrolled employees</p>
+      </div>
+      <div class="header-right">
+        <div class="date-selector">📅 Mar 1 – Mar 31, 2026</div>
+        <button class="btn-export">↓ Export PDF</button>
+        <button class="btn-primary">Share report</button>
+      </div>
+    </div>
+
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi-card accent animate-in delay-1">
+        <div class="kpi-label">Utilization rate</div>
+        <div class="kpi-value">34.2%</div>
+        <div class="kpi-sub">
+          <span class="kpi-badge up">↑ 6.1%</span>
+          <span class="kpi-benchmark">Industry avg: 3–5%</span>
+        </div>
+      </div>
+      <div class="kpi-card animate-in delay-2">
+        <div class="kpi-label">Time to first interaction</div>
+        <div class="kpi-value">4.2h</div>
+        <div class="kpi-sub">
+          <span class="kpi-badge up">↑ 18%</span>
+          <span class="kpi-benchmark">From 5.1h last month</span>
+        </div>
+      </div>
+      <div class="kpi-card animate-in delay-3">
+        <div class="kpi-label">Return engagement (2+ sessions)</div>
+        <div class="kpi-value">71%</div>
+        <div class="kpi-sub">
+          <span class="kpi-badge up">↑ 3.4%</span>
+          <span class="kpi-benchmark">Of all activated users</span>
+        </div>
+      </div>
+      <div class="kpi-card animate-in delay-4">
+        <div class="kpi-label">Avg response time</div>
+        <div class="kpi-value">1.8s</div>
+        <div class="kpi-sub">
+          <span class="kpi-badge neutral">—</span>
+          <span class="kpi-benchmark">24/7 · 99.97% uptime</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+      <!-- Utilization Trend -->
+      <div class="card animate-in delay-5">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Utilization trend</div>
+            <div class="card-subtitle">Monthly active users as % of enrolled population</div>
+          </div>
+          <div class="pill-group">
+            <button class="pill">6M</button>
+            <button class="pill active">12M</button>
+            <button class="pill">All</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid -->
+            <line x1="50" y1="30" x2="680" y2="30" class="grid-line"/>
+            <line x1="50" y1="80" x2="680" y2="80" class="grid-line"/>
+            <line x1="50" y1="130" x2="680" y2="130" class="grid-line"/>
+            <line x1="50" y1="180" x2="680" y2="180" class="grid-line"/>
+            <line x1="50" y1="230" x2="680" y2="230" class="grid-line"/>
+
+            <!-- Y-axis labels -->
+            <text x="40" y="34" class="axis-label" text-anchor="end">40%</text>
+            <text x="40" y="84" class="axis-label" text-anchor="end">30%</text>
+            <text x="40" y="134" class="axis-label" text-anchor="end">20%</text>
+            <text x="40" y="184" class="axis-label" text-anchor="end">10%</text>
+            <text x="40" y="234" class="axis-label" text-anchor="end">0%</text>
+
+            <!-- X-axis labels -->
+            <text x="102" y="252" class="axis-label" text-anchor="middle">Apr</text>
+            <text x="155" y="252" class="axis-label" text-anchor="middle">May</text>
+            <text x="207" y="252" class="axis-label" text-anchor="middle">Jun</text>
+            <text x="260" y="252" class="axis-label" text-anchor="middle">Jul</text>
+            <text x="312" y="252" class="axis-label" text-anchor="middle">Aug</text>
+            <text x="365" y="252" class="axis-label" text-anchor="middle">Sep</text>
+            <text x="417" y="252" class="axis-label" text-anchor="middle">Oct</text>
+            <text x="470" y="252" class="axis-label" text-anchor="middle">Nov</text>
+            <text x="522" y="252" class="axis-label" text-anchor="middle">Dec</text>
+            <text x="575" y="252" class="axis-label" text-anchor="middle">Jan</text>
+            <text x="627" y="252" class="axis-label" text-anchor="middle">Feb</text>
+            <text x="680" y="252" class="axis-label" text-anchor="middle">Mar</text>
+
+            <!-- Industry benchmark line -->
+            <line x1="50" y1="205" x2="680" y2="205" stroke="#d35a4a" stroke-width="1" stroke-dasharray="6,4" opacity="0.5"/>
+            <text x="684" y="202" fill="#d35a4a" font-size="10" font-family="Tahoma, sans-serif" opacity="0.7">Industry 5%</text>
+
+            <!-- Area fill -->
+            <path d="M102,195 L155,185 L207,175 L260,165 L312,155 L365,148 L417,135 L470,120 L522,108 L575,95 L627,82 L680,62 L680,230 L102,230 Z" fill="url(#areaGrad)" class="chart-area"/>
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#115430" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#115430" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Line -->
+            <polyline points="102,195 155,185 207,175 260,165 312,155 365,148 417,135 470,120 522,108 575,95 627,82 680,62" class="chart-line" stroke="#115430"/>
+
+            <!-- Dots -->
+            <circle cx="102" cy="195" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="155" cy="185" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="207" cy="175" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="260" cy="165" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="312" cy="155" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="365" cy="148" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="417" cy="135" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="470" cy="120" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="522" cy="108" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="575" cy="95" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="627" cy="82" r="4" fill="#115430" class="chart-dot"/>
+            <circle cx="680" cy="62" r="5.5" fill="#66BA24" stroke="white" stroke-width="2.5"/>
+
+            <!-- Current label -->
+            <rect x="650" y="40" width="58" height="20" rx="4" fill="#115430"/>
+            <text x="679" y="54" fill="white" font-size="11" font-weight="700" text-anchor="middle" font-family="Tahoma, sans-serif">34.2%</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Engagement Funnel -->
+      <div class="card animate-in delay-6">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Engagement depth</div>
+            <div class="card-subtitle">How deep users go</div>
+          </div>
+        </div>
+        <div class="funnel">
+          <div class="funnel-step">
+            <div class="funnel-label">Enrolled</div>
+            <div class="funnel-bar-wrap"><div class="funnel-bar green" style="width:100%"></div></div>
+            <div class="funnel-val">2,340</div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">Activated</div>
+            <div class="funnel-bar-wrap"><div class="funnel-bar green" style="width:34.2%"></div></div>
+            <div class="funnel-val">800</div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">2+ sessions</div>
+            <div class="funnel-bar-wrap"><div class="funnel-bar green" style="width:24.3%"></div></div>
+            <div class="funnel-val">568</div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">5+ sessions</div>
+            <div class="funnel-bar-wrap"><div class="funnel-bar light" style="width:15.8%"></div></div>
+            <div class="funnel-val">370</div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">10+ sessions</div>
+            <div class="funnel-bar-wrap"><div class="funnel-bar light" style="width:8.9%"></div></div>
+            <div class="funnel-val">208</div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">Weekly active</div>
+            <div class="funnel-bar-wrap"><div class="funnel-bar light" style="width:6.2%"></div></div>
+            <div class="funnel-val">145</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topics Section -->
+    <div class="topics-grid">
+      <!-- Topic Trends -->
+      <div class="topic-card animate-in delay-5">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Conversation themes</div>
+            <div class="card-subtitle">Anonymized topic distribution this month</div>
+          </div>
+        </div>
+        <div class="topic-bars">
+          <div class="topic-row">
+            <div class="topic-name">Work stress</div>
+            <div class="topic-bar-bg"><div class="topic-bar-fill" style="width:72%"></div></div>
+            <div class="topic-pct">28%</div>
+            <div class="topic-change up">↑ 4.2%</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-name">Anxiety</div>
+            <div class="topic-bar-bg"><div class="topic-bar-fill" style="width:56%"></div></div>
+            <div class="topic-pct">22%</div>
+            <div class="topic-change flat">—</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-name">Relationships</div>
+            <div class="topic-bar-bg"><div class="topic-bar-fill" style="width:38%"></div></div>
+            <div class="topic-pct">15%</div>
+            <div class="topic-change down">↓ 1.8%</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-name">Sleep & fatigue</div>
+            <div class="topic-bar-bg"><div class="topic-bar-fill accent" style="width:31%"></div></div>
+            <div class="topic-pct">12%</div>
+            <div class="topic-change up">↑ 2.1%</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-name">Financial stress</div>
+            <div class="topic-bar-bg"><div class="topic-bar-fill accent" style="width:26%"></div></div>
+            <div class="topic-pct">10%</div>
+            <div class="topic-change up">↑ 5.6%</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-name">Self-esteem</div>
+            <div class="topic-bar-bg"><div class="topic-bar-fill accent" style="width:18%"></div></div>
+            <div class="topic-pct">7%</div>
+            <div class="topic-change down">↓ 0.9%</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-name">Grief & loss</div>
+            <div class="topic-bar-bg"><div class="topic-bar-fill accent" style="width:15%"></div></div>
+            <div class="topic-pct">6%</div>
+            <div class="topic-change flat">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Department Heatmap -->
+      <div class="topic-card animate-in delay-6">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Engagement by department</div>
+            <div class="card-subtitle">Weekly utilization % — last 7 weeks (min 25 employees)</div>
+          </div>
+        </div>
+        <div class="heatmap-grid">
+          <!-- Header row -->
+          <div></div>
+          <div class="heatmap-header">W1</div>
+          <div class="heatmap-header">W2</div>
+          <div class="heatmap-header">W3</div>
+          <div class="heatmap-header">W4</div>
+          <div class="heatmap-header">W5</div>
+          <div class="heatmap-header">W6</div>
+          <div class="heatmap-header">W7</div>
+
+          <!-- Engineering -->
+          <div class="heatmap-row-label">Engineering</div>
+          <div class="heatmap-cell heat-4">38</div>
+          <div class="heatmap-cell heat-4">41</div>
+          <div class="heatmap-cell heat-5">44</div>
+          <div class="heatmap-cell heat-4">40</div>
+          <div class="heatmap-cell heat-5">45</div>
+          <div class="heatmap-cell heat-5">43</div>
+          <div class="heatmap-cell heat-5">47</div>
+
+          <!-- Customer Success -->
+          <div class="heatmap-row-label">Customer success</div>
+          <div class="heatmap-cell heat-3">30</div>
+          <div class="heatmap-cell heat-3">32</div>
+          <div class="heatmap-cell heat-4">36</div>
+          <div class="heatmap-cell heat-4">38</div>
+          <div class="heatmap-cell heat-4">35</div>
+          <div class="heatmap-cell heat-4">37</div>
+          <div class="heatmap-cell heat-4">39</div>
+
+          <!-- Sales -->
+          <div class="heatmap-row-label">Sales</div>
+          <div class="heatmap-cell heat-2">18</div>
+          <div class="heatmap-cell heat-2">20</div>
+          <div class="heatmap-cell heat-2">19</div>
+          <div class="heatmap-cell heat-3">24</div>
+          <div class="heatmap-cell heat-3">26</div>
+          <div class="heatmap-cell heat-3">25</div>
+          <div class="heatmap-cell heat-3">28</div>
+
+          <!-- Operations -->
+          <div class="heatmap-row-label">Operations</div>
+          <div class="heatmap-cell heat-3">28</div>
+          <div class="heatmap-cell heat-3">30</div>
+          <div class="heatmap-cell heat-3">29</div>
+          <div class="heatmap-cell heat-3">31</div>
+          <div class="heatmap-cell heat-4">34</div>
+          <div class="heatmap-cell heat-4">36</div>
+          <div class="heatmap-cell heat-4">35</div>
+
+          <!-- HR & People -->
+          <div class="heatmap-row-label">HR & People</div>
+          <div class="heatmap-cell heat-4">42</div>
+          <div class="heatmap-cell heat-5">45</div>
+          <div class="heatmap-cell heat-5">48</div>
+          <div class="heatmap-cell heat-5">46</div>
+          <div class="heatmap-cell heat-5">50</div>
+          <div class="heatmap-cell heat-5">49</div>
+          <div class="heatmap-cell heat-5">52</div>
+
+          <!-- Finance -->
+          <div class="heatmap-row-label">Finance</div>
+          <div class="heatmap-cell heat-1">12</div>
+          <div class="heatmap-cell heat-1">14</div>
+          <div class="heatmap-cell heat-2">16</div>
+          <div class="heatmap-cell heat-2">15</div>
+          <div class="heatmap-cell heat-2">18</div>
+          <div class="heatmap-cell heat-2">17</div>
+          <div class="heatmap-cell heat-2">20</div>
+
+          <!-- Warehouse -->
+          <div class="heatmap-row-label">Warehouse</div>
+          <div class="heatmap-cell heat-3">26</div>
+          <div class="heatmap-cell heat-3">28</div>
+          <div class="heatmap-cell heat-3">30</div>
+          <div class="heatmap-cell heat-4">33</div>
+          <div class="heatmap-cell heat-4">35</div>
+          <div class="heatmap-cell heat-4">34</div>
+          <div class="heatmap-cell heat-4">38</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="bottom-row">
+      <!-- Availability -->
+      <div class="card animate-in delay-7">
+        <div class="card-header">
+          <div>
+            <div class="card-title">24-hour availability</div>
+            <div class="card-subtitle">Sessions by hour of day — proving always-on access</div>
+          </div>
+        </div>
+        <div style="height: 120px; display: flex; align-items: flex-end;">
+          <div class="avail-grid" style="width: 100%; height: 100%; align-items: flex-end;">
+            <div class="avail-bar" style="height:12%"></div>
+            <div class="avail-bar" style="height:8%"></div>
+            <div class="avail-bar" style="height:5%"></div>
+            <div class="avail-bar" style="height:3%"></div>
+            <div class="avail-bar" style="height:4%"></div>
+            <div class="avail-bar" style="height:8%"></div>
+            <div class="avail-bar" style="height:22%"></div>
+            <div class="avail-bar" style="height:45%"></div>
+            <div class="avail-bar" style="height:62%"></div>
+            <div class="avail-bar" style="height:55%"></div>
+            <div class="avail-bar" style="height:48%"></div>
+            <div class="avail-bar" style="height:42%"></div>
+            <div class="avail-bar" style="height:52%"></div>
+            <div class="avail-bar" style="height:58%"></div>
+            <div class="avail-bar" style="height:50%"></div>
+            <div class="avail-bar" style="height:45%"></div>
+            <div class="avail-bar" style="height:40%"></div>
+            <div class="avail-bar" style="height:55%"></div>
+            <div class="avail-bar" style="height:65%"></div>
+            <div class="avail-bar" style="height:82%"></div>
+            <div class="avail-bar" style="height:100%;background:var(--spring-green)"></div>
+            <div class="avail-bar" style="height:72%"></div>
+            <div class="avail-bar" style="height:42%"></div>
+            <div class="avail-bar" style="height:25%"></div>
+          </div>
+        </div>
+        <div class="avail-labels">
+          <div class="avail-label">12a</div><div class="avail-label">1</div><div class="avail-label">2</div>
+          <div class="avail-label">3</div><div class="avail-label">4</div><div class="avail-label">5</div>
+          <div class="avail-label">6</div><div class="avail-label">7</div><div class="avail-label">8</div>
+          <div class="avail-label">9</div><div class="avail-label">10</div><div class="avail-label">11</div>
+          <div class="avail-label">12p</div><div class="avail-label">1</div><div class="avail-label">2</div>
+          <div class="avail-label">3</div><div class="avail-label">4</div><div class="avail-label">5</div>
+          <div class="avail-label">6</div><div class="avail-label">7</div><div class="avail-label" style="color:var(--spring-green);font-weight:700">8</div>
+          <div class="avail-label">9</div><div class="avail-label">10</div><div class="avail-label">11</div>
+        </div>
+        <div class="avail-stat-row">
+          <div>
+            <div class="avail-stat-label">Median response</div>
+            <div class="avail-stat-val">1.8s</div>
+          </div>
+          <div>
+            <div class="avail-stat-label">After-hours sessions</div>
+            <div class="avail-stat-val">38%</div>
+          </div>
+          <div>
+            <div class="avail-stat-label">Peak hour</div>
+            <div class="avail-stat-val">8 PM</div>
+          </div>
+          <div>
+            <div class="avail-stat-label">Uptime</div>
+            <div class="avail-stat-val">99.97%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk Tiers -->
+      <div class="card animate-in delay-8">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Population wellness tiers</div>
+            <div class="card-subtitle">Engagement pattern classification — anonymized</div>
+          </div>
+        </div>
+        <div class="risk-tiers">
+          <div class="risk-bar-stack">
+            <div class="risk-segment risk-low" style="width:74%">74%</div>
+            <div class="risk-segment risk-mod" style="width:18%">18%</div>
+            <div class="risk-segment risk-elev" style="width:8%">8%</div>
+          </div>
+          <div class="risk-legend">
+            <div class="risk-row">
+              <div class="risk-dot" style="background:#8cc63f"></div>
+              <div class="risk-info">
+                <div>
+                  <div class="risk-name">Healthy engagement</div>
+                  <div class="risk-desc">Periodic check-ins, general wellness topics</div>
+                </div>
+                <div class="risk-pct">592 users</div>
+              </div>
+            </div>
+            <div class="risk-row">
+              <div class="risk-dot" style="background:#e8a838"></div>
+              <div class="risk-info">
+                <div>
+                  <div class="risk-name">Moderate need</div>
+                  <div class="risk-desc">Frequent sessions, focused topic areas</div>
+                </div>
+                <div class="risk-pct">144 users</div>
+              </div>
+            </div>
+            <div class="risk-row">
+              <div class="risk-dot" style="background:#d35a4a"></div>
+              <div class="risk-info">
+                <div>
+                  <div class="risk-name">Elevated need</div>
+                  <div class="risk-desc">High-frequency, escalation pathway offered</div>
+                </div>
+                <div class="risk-pct">64 users</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escalation Banner -->
+    <div class="escalation-banner animate-in delay-8">
+      <div class="esc-left">
+        <div class="esc-icon">🛡️</div>
+        <div>
+          <div class="esc-title">Crisis escalation protocol — March 2026</div>
+          <div class="esc-desc">All elevated-need users received human escalation resources. Full audit trail available.</div>
+        </div>
+      </div>
+      <div class="esc-stats">
+        <div class="esc-stat">
+          <div class="esc-stat-val">12</div>
+          <div class="esc-stat-label">Escalations triggered</div>
+        </div>
+        <div class="esc-stat">
+          <div class="esc-stat-val">100%</div>
+          <div class="esc-stat-label">Handoff completed</div>
+        </div>
+        <div class="esc-stat">
+          <div class="esc-stat-val">&lt;4 min</div>
+          <div class="esc-stat-label">Avg time to handoff</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
