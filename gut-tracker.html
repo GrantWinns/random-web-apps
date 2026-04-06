@@ -23,7 +23,8 @@ h1{font-size:28px;font-weight:700;letter-spacing:-0.5px}
 .progress-outer{margin-top:16px;height:4px;background:#1e1e1e;border-radius:2px;overflow:hidden}
 .progress-inner{height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:2px;transition:width 0.5s ease}
 .nav{display:flex;gap:4px;padding:0 20px;margin-bottom:8px}
-.nav button{flex:1;padding:10px 0;border:none;background:transparent;color:#666;font-size:13px;font-weight:600;cursor:pointer;border-radius:8px;font-family:inherit}
+.nav button{flex:1;padding:10px 0;border:none;background:transparent;color:#666;font-size:13px;font-weight:600;cursor:pointer;border-radius:8px;font-family:inherit;transition:transform 0.1s ease}
+.nav button:active{transform:scale(0.96)}
 .nav button.active{background:#1a1a1a;color:#e8e8e8}
 .content{padding:0 20px}
 .card{background:#161616;border-radius:14px;padding:16px;border:1px solid #222;margin-bottom:12px}
@@ -33,13 +34,16 @@ h1{font-size:28px;font-weight:700;letter-spacing:-0.5px}
 .toggle-row,.scale-row{display:flex;gap:8px}
 .scale-row{gap:6px}
 .toggle-btn,.scale-btn{flex:1;padding:12px 0;border:1px solid #333;background:#1a1a1a;color:#888;font-size:14px;font-weight:600;cursor:pointer;border-radius:10px;font-family:inherit;transition:all 0.15s ease}
+.toggle-btn:active,.scale-btn:active{transform:scale(0.95)}
 .scale-btn{padding:10px 4px;font-size:11px}
 .toggle-btn.yes{background:#1a3a2a;border-color:#4ade80;color:#4ade80}
 .toggle-btn.no{background:#3a1a1a;border-color:#f87171;color:#f87171}
 .saved-banner{background:#1a2e1a;border:1px solid #2a4a2a;border-radius:10px;padding:10px 14px;font-size:13px;color:#4ade80;text-align:center;font-weight:500;margin-bottom:12px}
+.backup-banner{background:#1a2a3a;border:1px solid #2a4a6a;border-radius:10px;padding:10px 14px;font-size:13px;color:#60a5fa;text-align:center;font-weight:500;margin-bottom:12px;cursor:pointer}
 textarea{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;color:#ccc;font-size:14px;font-family:inherit;resize:vertical;outline:none}
 .save-btn{width:100%;padding:16px 0;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:16px;font-weight:700;cursor:pointer;border-radius:14px;font-family:inherit;margin-top:4px;margin-bottom:12px;transition:transform 0.1s ease}
 .save-btn:active{transform:scale(0.98)}
+.save-btn.saved{background:linear-gradient(135deg,#1a3a2a,#1a2e1a);color:#4ade80;border:1px solid #2a4a2a}
 .stats-row{display:flex;gap:10px;margin-bottom:12px}
 .stat-card{flex:1;background:#161616;border-radius:14px;padding:16px;border:1px solid #222;display:flex;flex-direction:column;align-items:center}
 .stat-value{font-size:28px;font-weight:700;color:#4ade80}
@@ -81,169 +85,368 @@ textarea{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:10px;
 .entry-details{display:flex;flex-wrap:wrap;gap:6px}
 .entry-pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid #333;color:#888}
 .entry-notes{font-size:12px;color:#666;margin-top:8px;font-style:italic;line-height:1.4}
+.backup-row{display:flex;gap:8px;margin-bottom:12px}
+.backup-btn{flex:1;padding:14px 0;border:1px solid #333;background:#1a1a1a;color:#888;font-size:13px;font-weight:600;cursor:pointer;border-radius:10px;font-family:inherit;transition:all 0.15s ease;text-align:center}
+.backup-btn:active{transform:scale(0.95)}
 .hidden{display:none}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-const STORAGE_KEY="gut-tracker-v1";
-const PROTOCOL_DAYS=84;
-const sugarLabels=["None","Low","Moderate","Heavy"];
-const painLabels=["None","Mild","Moderate","Severe"];
-const cravingLabels=["None","Low","Moderate","Intense"];
-const sugarColors=["#4ade80","#a3e635","#fbbf24","#f87171"];
-const painColors=["#4ade80","#fbbf24","#f97316","#ef4444"];
-const cravingColors=["#4ade80","#a3e635","#fbbf24","#f87171"];
+const STORAGE_KEY = "gut-tracker-v1";
+const IDB_NAME = "gut-tracker-db";
+const IDB_STORE = "data";
+const PROTOCOL_DAYS = 84;
+const sugarLabels = ["None", "Low", "Moderate", "Heavy"];
+const painLabels = ["None", "Mild", "Moderate", "Severe"];
+const cravingLabels = ["None", "Low", "Moderate", "Intense"];
+const sugarColors = ["#4ade80", "#a3e635", "#fbbf24", "#f87171"];
+const painColors = ["#4ade80", "#fbbf24", "#f97316", "#ef4444"];
+const cravingColors = ["#4ade80", "#a3e635", "#fbbf24", "#f87171"];
 
-function todayStr(){return new Date().toISOString().split("T")[0]}
+function todayStr() { return new Date().toISOString().split("T")[0]; }
 
-let state={entries:{},startDate:null,currentEntry:{date:todayStr(),tookProbiotic:null,sugarLevel:null,painLevel:null,cravingLevel:null,fermentedFood:null,notes:""},view:"log",savedToday:false};
+let state = {
+  entries: {},
+  startDate: null,
+  lastBackup: null,
+  currentEntry: { date: todayStr(), tookProbiotic: null, sugarLevel: null, painLevel: null, cravingLevel: null, notes: "" },
+  view: "log",
+  savedToday: false
+};
 
-function loadData(){
-try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const d=JSON.parse(raw);state.entries=d.entries||{};state.startDate=d.startDate||null;if(state.entries[todayStr()]){state.currentEntry={...state.entries[todayStr()]};state.savedToday=true}}}catch(e){console.log("No data")}
+// --- IndexedDB helpers ---
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
 }
 
-function saveData(){
-try{localStorage.setItem(STORAGE_KEY,JSON.stringify({entries:state.entries,startDate:state.startDate}))}catch(e){console.error("Save failed")}
+async function idbSave(data) {
+  try {
+    const db = await openIDB();
+    const tx = db.transaction(IDB_STORE, "readwrite");
+    tx.objectStore(IDB_STORE).put(data, "main");
+    await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+    db.close();
+  } catch (e) { console.log("IDB save failed:", e); }
 }
 
-function getDayNum(){if(!state.startDate)return 0;return Math.floor((new Date(todayStr())-new Date(state.startDate))/(864e5))+1}
-function getWeekNum(){return Math.ceil(getDayNum()/7)}
-function getStreak(){let s=0;const d=new Date(todayStr());while(true){const k=d.toISOString().split("T")[0];if(state.entries[k]&&state.entries[k].tookProbiotic===true){s++;d.setDate(d.getDate()-1)}else break}return s}
-function getCompletionRate(){const k=Object.keys(state.entries);if(!k.length)return 0;return Math.round(k.filter(x=>state.entries[x].tookProbiotic===true).length/k.length*100)}
-
-function getLast7(){const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().split("T")[0];days.push({date:k,label:d.toLocaleDateString("en-US",{weekday:"short"}),entry:state.entries[k]||null})}return days}
-
-function getLast30(){const days=[];for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().split("T")[0];days.push({date:k,entry:state.entries[k]||null})}return days}
-
-function getWeeklyAvg(){const weeks={};Object.values(state.entries).forEach(e=>{const d=new Date(e.date);const ws=new Date(d);ws.setDate(d.getDate()-d.getDay());const wk=ws.toISOString().split("T")[0];if(!weeks[wk])weeks[wk]=[];weeks[wk].push(e)});return Object.entries(weeks).sort(([a],[b])=>a.localeCompare(b)).slice(-8).map(([key,ents],i)=>{const avg=f=>{const v=ents.filter(e=>e[f]!==null).map(e=>e[f]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};return{week:key,sugar:avg("sugarLevel"),pain:avg("painLevel"),craving:avg("cravingLevel"),days:ents.length}})}
-
-function saveEntry(){
-state.entries[todayStr()]={...state.currentEntry,date:todayStr()};
-if(!state.startDate)state.startDate=todayStr();
-state.savedToday=true;
-saveData();render();
+async function idbLoad() {
+  try {
+    const db = await openIDB();
+    const tx = db.transaction(IDB_STORE, "readonly");
+    const req = tx.objectStore(IDB_STORE).get("main");
+    const result = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = rej; });
+    db.close();
+    return result || null;
+  } catch (e) { console.log("IDB load failed:", e); return null; }
 }
 
-function setView(v){state.view=v;render()}
-function updateEntry(field,val){state.currentEntry[field]=val;render()}
-
-function render(){
-const app=document.getElementById("app");
-const dn=getDayNum();const wn=getWeekNum();const streak=getStreak();
-
-let html=`<div class="header"><div class="header-top"><div><h1>Gut Protocol</h1><p class="subtitle">${state.startDate?`Day ${dn} of 84 · Week ${wn}`:"Start your 12-week protocol"}</p></div>${state.startDate?`<div class="streak"><span class="streak-num">${streak}</span><span class="streak-label">day streak</span></div>`:""}</div>${state.startDate?`<div class="progress-outer"><div class="progress-inner" style="width:${Math.min(dn/PROTOCOL_DAYS*100,100)}%"></div></div>`:""}</div>`;
-
-html+=`<div class="nav"><button class="${state.view==="log"?"active":""}" onclick="setView('log')">Today</button><button class="${state.view==="trends"?"active":""}" onclick="setView('trends')">Trends</button><button class="${state.view==="history"?"active":""}" onclick="setView('history')">History</button></div>`;
-
-html+=`<div class="content">`;
-
-if(state.view==="log") html+=renderLog();
-else if(state.view==="trends") html+=renderTrends();
-else html+=renderHistory();
-
-html+=`</div>`;
-app.innerHTML=html;
+// --- Storage ---
+function getStorageData() {
+  return { entries: state.entries, startDate: state.startDate, lastBackup: state.lastBackup };
 }
 
-function scaleBtn(field,labels,colors,val){
-return labels.map((l,i)=>{
-const sel=val===i;
-const style=sel?`background:${colors[i]};color:${i<2?"#1a2e1a":"#fff"};border-color:${colors[i]}`:"";
-return`<button class="scale-btn" style="${style}" onclick="updateEntry('${field}',${i})">${l}</button>`;
-}).join("");
+function saveData() {
+  const data = getStorageData();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { console.error("LS save failed"); }
+  idbSave(data);
 }
 
-function renderLog(){
-const e=state.currentEntry;
-let h="";
-if(state.savedToday)h+=`<div class="saved-banner">✓ Logged for today — tap any field to update</div>`;
+async function loadData() {
+  let lsData = null, idbData = null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) lsData = JSON.parse(raw);
+  } catch (e) {}
+  idbData = await idbLoad();
 
-h+=`<div class="card"><div class="card-header"><span class="card-icon">💊</span><span class="card-title">Akkermansia + Polyphenol</span></div><div class="toggle-row"><button class="toggle-btn ${e.tookProbiotic===true?"yes":""}" onclick="updateEntry('tookProbiotic',true)">Taken</button><button class="toggle-btn ${e.tookProbiotic===false?"no":""}" onclick="updateEntry('tookProbiotic',false)">Missed</button></div></div>`;
+  // Pick whichever has more entries
+  const lsCount = lsData ? Object.keys(lsData.entries || {}).length : 0;
+  const idbCount = idbData ? Object.keys(idbData.entries || {}).length : 0;
+  const best = idbCount > lsCount ? idbData : (lsData || idbData);
 
-h+=`<div class="card"><div class="card-header"><span class="card-icon">🍬</span><span class="card-title">Sugar / Candy Intake</span></div><div class="scale-row">${scaleBtn("sugarLevel",sugarLabels,sugarColors,e.sugarLevel)}</div></div>`;
-
-h+=`<div class="card"><div class="card-header"><span class="card-icon">📍</span><span class="card-title">Lower Right Pain</span></div><div class="scale-row">${scaleBtn("painLevel",painLabels,painColors,e.painLevel)}</div></div>`;
-
-h+=`<div class="card"><div class="card-header"><span class="card-icon">🧠</span><span class="card-title">Sugar Cravings</span></div><div class="scale-row">${scaleBtn("cravingLevel",cravingLabels,cravingColors,e.cravingLevel)}</div></div>`;
-
-h+=`<div class="card"><div class="card-header"><span class="card-icon">🥒</span><span class="card-title">Fermented Foods</span></div><div class="toggle-row"><button class="toggle-btn ${e.fermentedFood===true?"yes":""}" onclick="updateEntry('fermentedFood',true)">Had some</button><button class="toggle-btn ${e.fermentedFood===false?"no":""}" onclick="updateEntry('fermentedFood',false)">None today</button></div></div>`;
-
-h+=`<div class="card"><div class="card-header"><span class="card-icon">📝</span><span class="card-title">Notes</span></div><textarea id="notesField" placeholder="How are you feeling? Any symptoms worth noting..." rows="3" oninput="state.currentEntry.notes=this.value">${e.notes||""}</textarea></div>`;
-
-h+=`<button class="save-btn" onclick="saveEntry()">${state.savedToday?"Update Today's Log":"Save Today's Log"}</button>`;
-return h;
+  if (best) {
+    state.entries = best.entries || {};
+    state.startDate = best.startDate || null;
+    state.lastBackup = best.lastBackup || null;
+    if (state.entries[todayStr()]) {
+      state.currentEntry = { ...state.entries[todayStr()] };
+      state.savedToday = true;
+    }
+    // Sync both stores
+    saveData();
+  }
 }
 
-function renderTrends(){
-const last7=getLast7();const wa=getWeeklyAvg();const cr=getCompletionRate();const td=Object.keys(state.entries).length;
-let h=`<div class="stats-row"><div class="stat-card"><span class="stat-value">${cr}%</span><span class="stat-label">Compliance</span></div><div class="stat-card"><span class="stat-value">${td}</span><span class="stat-label">Days Logged</span></div></div>`;
-
-h+=`<div class="card"><h3 class="section-title">Last 7 Days</h3><div class="week-grid">`;
-last7.forEach(d=>{
-const e=d.entry;
-function dot(val,colors,label){
-const bg=val!=null?colors[val]:"#3a3a3a";const op=val!=null?1:0.3;const tc=val!=null&&val<2?"#1a2e1a":"#fff";
-return`<div class="dot" style="background:${bg};opacity:${op}"><span style="color:${tc}">${label}</span></div>`;
+// --- Computed ---
+function getDayNum() {
+  if (!state.startDate) return 0;
+  return Math.floor((new Date(todayStr()) - new Date(state.startDate)) / 864e5) + 1;
 }
-const probBg=e?.tookProbiotic===true?"#4ade80":e?.tookProbiotic===false?"#f87171":"#3a3a3a";
-const probTxt=e?.tookProbiotic===true?"✓":e?.tookProbiotic===false?"✗":"·";
-h+=`<div class="day-col"><div style="display:flex;flex-direction:column;gap:4px">${dot(e?.sugarLevel??null,sugarColors,"S")}${dot(e?.painLevel??null,painColors,"P")}${dot(e?.cravingLevel??null,cravingColors,"C")}<div class="dot" style="background:${probBg};color:#fff;font-size:12px;font-weight:700">${probTxt}</div></div><span class="day-label">${d.label}</span></div>`;
-});
-h+=`</div><div class="legend-row"><span class="legend-item"><span class="legend-dot" style="background:#888"></span> S = Sugar</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span> P = Pain</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span> C = Cravings</span></div></div>`;
-
-if(wa.length>1){
-h+=`<div class="card"><h3 class="section-title">Weekly Averages</h3><div class="weekly-chart">`;
-wa.forEach((w,i)=>{
-h+=`<div class="week-row"><span class="week-label">Wk ${i+1}</span><div class="bar-group">`;
-if(w.sugar!==null)h+=`<div class="bar-row"><span class="bar-label">Sugar</span><div class="bar-track"><div class="bar" style="width:${(w.sugar/3)*100}%;background:${sugarColors[Math.round(w.sugar)]}"></div></div></div>`;
-if(w.pain!==null)h+=`<div class="bar-row"><span class="bar-label">Pain</span><div class="bar-track"><div class="bar" style="width:${(w.pain/3)*100}%;background:${painColors[Math.round(w.pain)]}"></div></div></div>`;
-if(w.craving!==null)h+=`<div class="bar-row"><span class="bar-label">Cravings</span><div class="bar-track"><div class="bar" style="width:${(w.craving/3)*100}%;background:${cravingColors[Math.round(w.craving)]}"></div></div></div>`;
-h+=`</div></div>`;
-});
-h+=`</div></div>`;
-}else{
-h+=`<div class="card"><p class="empty-text">Weekly trend data will appear after your first full week of logging.</p></div>`;
+function getWeekNum() { return Math.ceil(getDayNum() / 7); }
+function getStreak() {
+  let s = 0; const d = new Date(todayStr());
+  while (true) {
+    const k = d.toISOString().split("T")[0];
+    if (state.entries[k] && state.entries[k].tookProbiotic === true) { s++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return s;
 }
-
-h+=`<div class="card"><h3 class="section-title">What to Watch For</h3><p class="insight-item"><strong>Weeks 1-2:</strong> Sugar withdrawal may spike cravings and pain temporarily. Stay the course.</p><p class="insight-item"><strong>Weeks 3-4:</strong> Akkermansia colonization begins. Watch for reduced bloating and craving shifts.</p><p class="insight-item"><strong>Weeks 6-8:</strong> If pain frequency drops alongside sugar reduction, strong signal it's ICV-related.</p><p class="insight-item"><strong>Week 12:</strong> Full protocol complete. Compare Week 1 vs Week 12 data for your answer.</p></div>`;
-return h;
+function getCompletionRate() {
+  const k = Object.keys(state.entries);
+  if (!k.length) return 0;
+  return Math.round(k.filter(x => state.entries[x].tookProbiotic === true).length / k.length * 100);
 }
-
-function renderHistory(){
-const last30=getLast30();const td=todayStr();
-let h=`<div class="card"><h3 class="section-title">Last 30 Days</h3><div class="cal-grid">`;
-last30.forEach(day=>{
-const d=new Date(day.date+"T12:00:00");const dn=d.getDate();const has=!!day.entry;const took=day.entry?.tookProbiotic===true;
-let cls="cal-day "+(has?(took?"good":"missed"):"empty")+(day.date===td?" today":"");
-let dots="";
-if(has){
-if(day.entry.painLevel>0)dots+=`<span class="mini-dot" style="background:${painColors[day.entry.painLevel]}"></span>`;
-if(day.entry.sugarLevel>1)dots+=`<span class="mini-dot" style="background:${sugarColors[day.entry.sugarLevel]}"></span>`;
+function getLast7() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const k = d.toISOString().split("T")[0];
+    days.push({ date: k, label: d.toLocaleDateString("en-US", { weekday: "short" }), entry: state.entries[k] || null });
+  }
+  return days;
 }
-h+=`<div class="${cls}"><span class="cal-day-num">${dn}</span>${dots?`<div class="cal-dots">${dots}</div>`:""}</div>`;
-});
-h+=`</div><div class="cal-legend"><span class="legend-item"><span class="legend-swatch" style="background:#1a2e1a"></span> Taken</span><span class="legend-item"><span class="legend-swatch" style="background:#2e1a1a"></span> Missed</span><span class="legend-item"><span class="legend-swatch" style="background:#1a1a1a"></span> No data</span><span class="legend-item"><span class="mini-dot" style="background:#f97316;position:relative"></span> Pain</span><span class="legend-item"><span class="mini-dot" style="background:#fbbf24;position:relative"></span> High sugar</span></div></div>`;
-
-const withData=last30.filter(d=>d.entry).reverse().slice(0,7);
-h+=`<div class="card"><h3 class="section-title">Recent Entries</h3>`;
-if(withData.length){
-withData.forEach(day=>{
-const d=new Date(day.date+"T12:00:00");const e=day.entry;
-h+=`<div class="entry-row"><div class="entry-date"><span class="entry-day">${d.toLocaleDateString("en-US",{weekday:"short"})}</span><span class="entry-date-num">${d.toLocaleDateString("en-US",{month:"short",day:"numeric"})}</span></div><div class="entry-details"><span class="entry-pill">${e.tookProbiotic?"✓ Taken":"✗ Missed"}</span>`;
-if(e.sugarLevel!==null)h+=`<span class="entry-pill" style="border-color:${sugarColors[e.sugarLevel]};color:${sugarColors[e.sugarLevel]}">${sugarLabels[e.sugarLevel]}</span>`;
-if(e.painLevel!==null&&e.painLevel>0)h+=`<span class="entry-pill" style="border-color:${painColors[e.painLevel]};color:${painColors[e.painLevel]}">${painLabels[e.painLevel]} pain</span>`;
-h+=`</div>`;
-if(e.notes)h+=`<p class="entry-notes">${e.notes}</p>`;
-h+=`</div>`;
-});
-}else h+=`<p class="empty-text">No entries yet. Start logging today!</p>`;
-h+=`</div>`;
-return h;
+function getLast30() {
+  const days = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const k = d.toISOString().split("T")[0];
+    days.push({ date: k, entry: state.entries[k] || null });
+  }
+  return days;
+}
+function getWeeklyAvg() {
+  const weeks = {};
+  Object.values(state.entries).forEach(e => {
+    const d = new Date(e.date); const ws = new Date(d); ws.setDate(d.getDate() - d.getDay());
+    const wk = ws.toISOString().split("T")[0];
+    if (!weeks[wk]) weeks[wk] = [];
+    weeks[wk].push(e);
+  });
+  return Object.entries(weeks).sort(([a], [b]) => a.localeCompare(b)).slice(-8).map(([key, ents], i) => {
+    const avg = f => { const v = ents.filter(e => e[f] !== null).map(e => e[f]); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+    return { week: key, sugar: avg("sugarLevel"), pain: avg("painLevel"), craving: avg("cravingLevel"), days: ents.length };
+  });
+}
+function needsBackupReminder() {
+  const logged = Object.keys(state.entries).length;
+  if (logged < 7) return false;
+  if (!state.lastBackup) return true;
+  const daysSince = Math.floor((new Date(todayStr()) - new Date(state.lastBackup)) / 864e5);
+  return daysSince >= 7;
 }
 
-loadData();render();
+// --- Actions ---
+function saveEntry() {
+  state.entries[todayStr()] = { ...state.currentEntry, date: todayStr() };
+  if (!state.startDate) state.startDate = todayStr();
+  state.savedToday = true;
+  saveData();
+  render();
+}
+
+function setView(v) { state.view = v; render(); }
+
+function updateEntry(field, val) {
+  state.currentEntry[field] = val;
+  // Auto-save
+  state.entries[todayStr()] = { ...state.currentEntry, date: todayStr() };
+  if (!state.startDate) state.startDate = todayStr();
+  state.savedToday = true;
+  saveData();
+  render();
+}
+
+function exportBackup() {
+  const data = getStorageData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "gut-protocol-backup-" + todayStr() + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  state.lastBackup = todayStr();
+  saveData();
+  render();
+}
+
+function importBackup() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (data.entries) {
+        state.entries = data.entries;
+        state.startDate = data.startDate || state.startDate;
+        state.lastBackup = data.lastBackup || state.lastBackup;
+        if (state.entries[todayStr()]) {
+          state.currentEntry = { ...state.entries[todayStr()] };
+          state.savedToday = true;
+        }
+        saveData();
+        render();
+      }
+    } catch (err) { console.error("Import failed:", err); }
+  };
+  input.click();
+}
+
+// --- Render ---
+function render() {
+  const app = document.getElementById("app");
+  const notesEl = document.getElementById("notesField");
+  const notesFocused = notesEl && document.activeElement === notesEl;
+  const notesSelStart = notesFocused ? notesEl.selectionStart : null;
+  const notesSelEnd = notesFocused ? notesEl.selectionEnd : null;
+
+  const dn = getDayNum(); const wn = getWeekNum(); const streak = getStreak();
+
+  let html = `<div class="header"><div class="header-top"><div><h1>Gut Protocol</h1><p class="subtitle">${state.startDate ? `Day ${dn} of 84 \u00b7 Week ${wn}` : "Start your 12-week protocol"}</p></div>${state.startDate ? `<div class="streak"><span class="streak-num">${streak}</span><span class="streak-label">day streak</span></div>` : ""}</div>${state.startDate ? `<div class="progress-outer"><div class="progress-inner" style="width:${Math.min(dn / PROTOCOL_DAYS * 100, 100)}%"></div></div>` : ""}</div>`;
+
+  html += `<div class="nav"><button class="${state.view === "log" ? "active" : ""}" onclick="setView('log')">Today</button><button class="${state.view === "trends" ? "active" : ""}" onclick="setView('trends')">Trends</button><button class="${state.view === "history" ? "active" : ""}" onclick="setView('history')">History</button></div>`;
+
+  html += `<div class="content">`;
+  if (state.view === "log") html += renderLog();
+  else if (state.view === "trends") html += renderTrends();
+  else html += renderHistory();
+  html += `</div>`;
+  app.innerHTML = html;
+
+  // Restore textarea focus
+  if (notesFocused) {
+    const newNotes = document.getElementById("notesField");
+    if (newNotes) {
+      newNotes.focus();
+      newNotes.selectionStart = notesSelStart;
+      newNotes.selectionEnd = notesSelEnd;
+    }
+  }
+}
+
+function scaleBtn(field, labels, colors, val) {
+  return labels.map((l, i) => {
+    const sel = val === i;
+    const style = sel ? `background:${colors[i]};color:${i < 2 ? "#1a2e1a" : "#fff"};border-color:${colors[i]}` : "";
+    return `<button class="scale-btn" style="${style}" onclick="updateEntry('${field}',${i})">${l}</button>`;
+  }).join("");
+}
+
+function renderLog() {
+  const e = state.currentEntry;
+  let h = "";
+
+  if (needsBackupReminder()) {
+    h += `<div class="backup-banner" onclick="exportBackup()">It's been a week \u2014 tap to back up your data</div>`;
+  }
+
+  if (state.savedToday) h += `<div class="saved-banner">\u2713 Auto-saved \u2014 tap any field to update</div>`;
+
+  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83d\udc8a</span><span class="card-title">Akkermansia + Polyphenol</span></div><div class="toggle-row"><button class="toggle-btn ${e.tookProbiotic === true ? "yes" : ""}" onclick="updateEntry('tookProbiotic',true)">Taken</button><button class="toggle-btn ${e.tookProbiotic === false ? "no" : ""}" onclick="updateEntry('tookProbiotic',false)">Missed</button></div></div>`;
+
+  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83c\udf6c</span><span class="card-title">Sugar / Candy Intake</span></div><div class="scale-row">${scaleBtn("sugarLevel", sugarLabels, sugarColors, e.sugarLevel)}</div></div>`;
+
+  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83d\udccd</span><span class="card-title">Lower Right Pain</span></div><div class="scale-row">${scaleBtn("painLevel", painLabels, painColors, e.painLevel)}</div></div>`;
+
+  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83e\udde0</span><span class="card-title">Sugar Cravings</span></div><div class="scale-row">${scaleBtn("cravingLevel", cravingLabels, cravingColors, e.cravingLevel)}</div></div>`;
+
+  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83d\udcdd</span><span class="card-title">Notes</span></div><textarea id="notesField" placeholder="How are you feeling? Any symptoms worth noting..." rows="3" oninput="state.currentEntry.notes=this.value;saveEntry()">${e.notes || ""}</textarea></div>`;
+
+  h += `<button class="save-btn ${state.savedToday ? "saved" : ""}" onclick="saveEntry()">${state.savedToday ? "\u2713 Saved" : "Save Today's Log"}</button>`;
+  return h;
+}
+
+function renderTrends() {
+  const last7 = getLast7(); const wa = getWeeklyAvg(); const cr = getCompletionRate(); const td = Object.keys(state.entries).length;
+  let h = `<div class="stats-row"><div class="stat-card"><span class="stat-value">${cr}%</span><span class="stat-label">Compliance</span></div><div class="stat-card"><span class="stat-value">${td}</span><span class="stat-label">Days Logged</span></div></div>`;
+
+  h += `<div class="card"><h3 class="section-title">Last 7 Days</h3><div class="week-grid">`;
+  last7.forEach(d => {
+    const e = d.entry;
+    function dot(val, colors, label) {
+      const bg = val != null ? colors[val] : "#3a3a3a"; const op = val != null ? 1 : 0.3;
+      const tc = val != null && val < 2 ? "#1a2e1a" : "#fff";
+      return `<div class="dot" style="background:${bg};opacity:${op}"><span style="color:${tc}">${label}</span></div>`;
+    }
+    const probBg = e?.tookProbiotic === true ? "#4ade80" : e?.tookProbiotic === false ? "#f87171" : "#3a3a3a";
+    const probTxt = e?.tookProbiotic === true ? "\u2713" : e?.tookProbiotic === false ? "\u2717" : "\u00b7";
+    h += `<div class="day-col"><div style="display:flex;flex-direction:column;gap:4px">${dot(e?.sugarLevel ?? null, sugarColors, "S")}${dot(e?.painLevel ?? null, painColors, "P")}${dot(e?.cravingLevel ?? null, cravingColors, "C")}<div class="dot" style="background:${probBg};color:#fff;font-size:12px;font-weight:700">${probTxt}</div></div><span class="day-label">${d.label}</span></div>`;
+  });
+  h += `</div><div class="legend-row"><span class="legend-item"><span class="legend-dot" style="background:#888"></span> S = Sugar</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span> P = Pain</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span> C = Cravings</span></div></div>`;
+
+  if (wa.length > 1) {
+    h += `<div class="card"><h3 class="section-title">Weekly Averages</h3><div class="weekly-chart">`;
+    wa.forEach((w, i) => {
+      h += `<div class="week-row"><span class="week-label">Wk ${i + 1}</span><div class="bar-group">`;
+      if (w.sugar !== null) h += `<div class="bar-row"><span class="bar-label">Sugar</span><div class="bar-track"><div class="bar" style="width:${(w.sugar / 3) * 100}%;background:${sugarColors[Math.round(w.sugar)]}"></div></div></div>`;
+      if (w.pain !== null) h += `<div class="bar-row"><span class="bar-label">Pain</span><div class="bar-track"><div class="bar" style="width:${(w.pain / 3) * 100}%;background:${painColors[Math.round(w.pain)]}"></div></div></div>`;
+      if (w.craving !== null) h += `<div class="bar-row"><span class="bar-label">Cravings</span><div class="bar-track"><div class="bar" style="width:${(w.craving / 3) * 100}%;background:${cravingColors[Math.round(w.craving)]}"></div></div></div>`;
+      h += `</div></div>`;
+    });
+    h += `</div></div>`;
+  } else {
+    h += `<div class="card"><p class="empty-text">Weekly trend data will appear after your first full week of logging.</p></div>`;
+  }
+
+  h += `<div class="card"><h3 class="section-title">What to Watch For</h3><p class="insight-item"><strong>Weeks 1-2:</strong> Sugar withdrawal may spike cravings and pain temporarily. Stay the course.</p><p class="insight-item"><strong>Weeks 3-4:</strong> Akkermansia colonization begins. Watch for reduced bloating and craving shifts.</p><p class="insight-item"><strong>Weeks 6-8:</strong> If pain frequency drops alongside sugar reduction, strong signal it\u2019s ICV-related.</p><p class="insight-item"><strong>Week 12:</strong> Full protocol complete. Compare Week 1 vs Week 12 data for your answer.</p></div>`;
+  return h;
+}
+
+function renderHistory() {
+  const last30 = getLast30(); const td = todayStr();
+
+  let h = `<div class="backup-row"><button class="backup-btn" onclick="exportBackup()">\u2b07 Backup Data</button><button class="backup-btn" onclick="importBackup()">\u2b06 Restore Backup</button></div>`;
+
+  if (state.lastBackup) {
+    h += `<div style="font-size:11px;color:#555;text-align:center;margin:-6px 0 12px">Last backup: ${new Date(state.lastBackup + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>`;
+  }
+
+  h += `<div class="card"><h3 class="section-title">Last 30 Days</h3><div class="cal-grid">`;
+  last30.forEach(day => {
+    const d = new Date(day.date + "T12:00:00"); const dn = d.getDate(); const has = !!day.entry; const took = day.entry?.tookProbiotic === true;
+    let cls = "cal-day " + (has ? (took ? "good" : "missed") : "empty") + (day.date === td ? " today" : "");
+    let dots = "";
+    if (has) {
+      if (day.entry.painLevel > 0) dots += `<span class="mini-dot" style="background:${painColors[day.entry.painLevel]}"></span>`;
+      if (day.entry.sugarLevel > 1) dots += `<span class="mini-dot" style="background:${sugarColors[day.entry.sugarLevel]}"></span>`;
+    }
+    h += `<div class="${cls}"><span class="cal-day-num">${dn}</span>${dots ? `<div class="cal-dots">${dots}</div>` : ""}</div>`;
+  });
+  h += `</div><div class="cal-legend"><span class="legend-item"><span class="legend-swatch" style="background:#1a2e1a"></span> Taken</span><span class="legend-item"><span class="legend-swatch" style="background:#2e1a1a"></span> Missed</span><span class="legend-item"><span class="legend-swatch" style="background:#1a1a1a"></span> No data</span><span class="legend-item"><span class="mini-dot" style="background:#f97316;position:relative"></span> Pain</span><span class="legend-item"><span class="mini-dot" style="background:#fbbf24;position:relative"></span> High sugar</span></div></div>`;
+
+  const withData = last30.filter(d => d.entry).reverse().slice(0, 7);
+  h += `<div class="card"><h3 class="section-title">Recent Entries</h3>`;
+  if (withData.length) {
+    withData.forEach(day => {
+      const d = new Date(day.date + "T12:00:00"); const e = day.entry;
+      h += `<div class="entry-row"><div class="entry-date"><span class="entry-day">${d.toLocaleDateString("en-US", { weekday: "short" })}</span><span class="entry-date-num">${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></div><div class="entry-details"><span class="entry-pill">${e.tookProbiotic ? "\u2713 Taken" : "\u2717 Missed"}</span>`;
+      if (e.sugarLevel !== null) h += `<span class="entry-pill" style="border-color:${sugarColors[e.sugarLevel]};color:${sugarColors[e.sugarLevel]}">${sugarLabels[e.sugarLevel]}</span>`;
+      if (e.painLevel !== null && e.painLevel > 0) h += `<span class="entry-pill" style="border-color:${painColors[e.painLevel]};color:${painColors[e.painLevel]}">${painLabels[e.painLevel]} pain</span>`;
+      h += `</div>`;
+      if (e.notes) h += `<p class="entry-notes">${e.notes}</p>`;
+      h += `</div>`;
+    });
+  } else h += `<p class="empty-text">No entries yet. Start logging today!</p>`;
+  h += `</div>`;
+  return h;
+}
+
+// --- Init ---
+loadData().then(() => render());
 </script>
 </body>
 </html>
