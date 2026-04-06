@@ -11,87 +11,143 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMTIyMDEyIi8+PHRleHQgeD0iOTAiIHk9IjEwNSIgZm9udC1mYW1pbHk9InN5c3RlbS11aSIgZm9udC1zaXplPSI4MCIgZmlsbD0iIzRhZGU4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+R1A8L3RleHQ+PC9zdmc+">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:#0f0f0f;color:#e8e8e8;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;overscroll-behavior:none;padding-bottom:env(safe-area-inset-bottom)}
+:root{--green:#4ade80;--green-dim:#22c55e;--green-bg:#1a2e1a;--green-border:#2a4a2a;--red:#f87171;--red-bg:#3a1a1a;--red-border:#4a2a2a;--yellow:#fbbf24;--orange:#f97316;--lime:#a3e635;--surface:#161616;--surface-border:#222;--bg:#0f0f0f;--text:#e8e8e8;--text-secondary:#999;--text-muted:#555;--text-dim:#444}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;overscroll-behavior:none;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 ::-webkit-scrollbar{display:none}
-.header{padding:max(env(safe-area-inset-top),28px) 20px 16px;background:linear-gradient(180deg,#162016 0%,#0f0f0f 100%)}
-.header-top{display:flex;justify-content:space-between;align-items:flex-start}
-h1{font-size:28px;font-weight:700;letter-spacing:-0.5px}
-.subtitle{font-size:13px;color:#6b8f6b;margin-top:4px;font-weight:500}
-.streak{display:flex;flex-direction:column;align-items:center;background:#1a2e1a;border-radius:12px;padding:8px 14px;border:1px solid #2a4a2a}
-.streak-num{font-size:22px;font-weight:700;color:#4ade80;line-height:1}
-.streak-label{font-size:10px;color:#6b8f6b;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px}
-.progress-outer{margin-top:16px;height:4px;background:#1e1e1e;border-radius:2px;overflow:hidden}
-.progress-inner{height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:2px;transition:width 0.5s ease}
-.nav{display:flex;gap:4px;padding:0 20px;margin-bottom:8px}
-.nav button{flex:1;padding:10px 0;border:none;background:transparent;color:#666;font-size:13px;font-weight:600;cursor:pointer;border-radius:8px;font-family:inherit;transition:transform 0.1s ease}
-.nav button:active{transform:scale(0.96)}
-.nav button.active{background:#1a1a1a;color:#e8e8e8}
-.content{padding:0 20px}
-.card{background:#161616;border-radius:14px;padding:16px;border:1px solid #222;margin-bottom:12px}
-.card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.card-icon{font-size:18px}
-.card-title{font-size:14px;font-weight:600;color:#ccc}
-.toggle-row,.scale-row{display:flex;gap:8px}
-.scale-row{gap:6px}
-.toggle-btn,.scale-btn{flex:1;padding:12px 0;border:1px solid #333;background:#1a1a1a;color:#888;font-size:14px;font-weight:600;cursor:pointer;border-radius:10px;font-family:inherit;transition:all 0.15s ease}
-.toggle-btn:active,.scale-btn:active{transform:scale(0.95)}
-.scale-btn{padding:10px 4px;font-size:11px}
-.toggle-btn.yes{background:#1a3a2a;border-color:#4ade80;color:#4ade80}
-.toggle-btn.no{background:#3a1a1a;border-color:#f87171;color:#f87171}
-.backup-banner{background:#1a2a3a;border:1px solid #2a4a6a;border-radius:10px;padding:10px 14px;font-size:13px;color:#60a5fa;text-align:center;font-weight:500;margin-bottom:12px;cursor:pointer}
-.saved-hint{font-size:11px;color:#555;text-align:center;padding:8px 0 12px;visibility:hidden}
-.saved-hint.visible{visibility:visible}
-.progress-dots{display:flex;justify-content:center;gap:8px;margin-bottom:12px;min-height:36px;align-items:center}
-.progress-dot{width:8px;height:8px;border-radius:4px;background:#333;transition:background 0.2s ease}
-.progress-dot.filled{background:#4ade80}
-.completion-card{background:#1a2e1a;border:1px solid #2a4a2a;border-radius:14px;padding:14px 16px;margin-bottom:12px;text-align:center;font-size:14px;font-weight:600;color:#4ade80;min-height:36px;display:flex;align-items:center;justify-content:center;gap:8px}
-.notes-trigger{background:#161616;border:1px solid #222;border-radius:14px;padding:16px;margin-bottom:12px;font-size:14px;color:#555;cursor:pointer;font-family:inherit}
-textarea{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;color:#ccc;font-size:14px;font-family:inherit;resize:vertical;outline:none}
+
+/* --- Header --- */
+.header{padding:max(env(safe-area-inset-top),20px) 20px 20px;text-align:center}
+.header-date{font-size:13px;color:var(--text-secondary);font-weight:500;margin-bottom:12px;letter-spacing:0.3px}
+.streak-hero{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
+.streak-fire{font-size:32px;line-height:1}
+.streak-count{font-size:40px;font-weight:800;color:var(--green);line-height:1;letter-spacing:-1px}
+.streak-unit{font-size:13px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.streak-zero .streak-fire{opacity:0.3}
+.streak-zero .streak-count{color:var(--text-dim)}
+.progress-wrap{padding:0 4px}
+.progress-bar{height:6px;background:#1e1e1e;border-radius:3px;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green-dim));border-radius:3px;transition:width 0.6s ease}
+.progress-label{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text-muted);font-weight:500}
+
+/* --- Content --- */
+.content{padding:0 20px;padding-top:8px}
+
+/* --- Tracker Section --- */
+.tracker{background:var(--surface);border-radius:16px;border:1px solid var(--surface-border);overflow:hidden;margin-bottom:12px}
+.tracker-item{padding:14px 16px}
+.tracker-item+.tracker-item{border-top:1px solid #1e1e1e}
+.tracker-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tracker-name{font-size:13px;font-weight:600;color:#ccc;display:flex;align-items:center;gap:8px}
+.tracker-name span:first-child{font-size:16px}
+.tracker-yesterday{font-size:11px;color:var(--text-dim);font-weight:500}
+
+/* --- Buttons --- */
+.btn-row{display:flex;gap:8px}
+.btn-row-4{gap:6px}
+.btn{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;border:1px solid #333;background:#1a1a1a;color:#888;font-size:14px;font-weight:600;cursor:pointer;border-radius:10px;font-family:inherit;transition:all 0.15s ease;padding:0 4px}
+.btn:active{transform:scale(0.95)}
+.btn-sm{font-size:12px}
+.btn.sel-green{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.btn.sel-red{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.btn.sel-0{background:#1a2e1a;border-color:#4ade80;color:#1a2e1a;font-weight:700}
+.btn.sel-1{background:#2a3a1a;border-color:#a3e635;color:#2a3a1a;font-weight:700}
+.btn.sel-2{background:#3a2e1a;border-color:#fbbf24;color:#3a2e1a;font-weight:700}
+.btn.sel-3{background:#3a1a1a;border-color:#f87171;color:#fff;font-weight:700}
+.btn.sel-pain-0{background:#1a2e1a;border-color:#4ade80;color:#1a2e1a;font-weight:700}
+.btn.sel-pain-1{background:#3a2e1a;border-color:#fbbf24;color:#3a2e1a;font-weight:700}
+.btn.sel-pain-2{background:#3a2a1a;border-color:#f97316;color:#fff;font-weight:700}
+.btn.sel-pain-3{background:#3a1a1a;border-color:#ef4444;color:#fff;font-weight:700}
+
+/* --- Completion --- */
+.completion{border-radius:16px;padding:20px;margin-bottom:12px;text-align:center;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.3s ease}
+.completion.pending{background:transparent}
+.completion.done{background:var(--green-bg);border:1px solid var(--green-border)}
+.completion-check{font-size:24px;margin-bottom:4px}
+.completion-text{font-size:14px;font-weight:600;color:var(--green)}
+.completion-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.dot-row{display:flex;gap:8px;justify-content:center}
+.dot-indicator{width:10px;height:10px;border-radius:5px;background:#2a2a2a;transition:all 0.2s ease}
+.dot-indicator.filled{background:var(--green)}
+
+/* --- Notes --- */
+.notes-tap{background:var(--surface);border:1px solid var(--surface-border);border-radius:16px;padding:16px;margin-bottom:12px;font-size:13px;color:var(--text-dim);cursor:pointer;font-family:inherit}
+.notes-card{background:var(--surface);border:1px solid var(--surface-border);border-radius:16px;padding:16px;margin-bottom:12px}
+.notes-card textarea{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;color:#ccc;font-size:14px;font-family:inherit;resize:vertical;outline:none}
+
+/* --- Saved Hint --- */
+.saved-hint{font-size:11px;color:var(--text-dim);text-align:center;padding:4px 0 8px;opacity:0;transition:opacity 0.3s ease}
+.saved-hint.visible{opacity:1}
+
+/* --- Bottom Nav --- */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,15,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #1e1e1e;display:flex;justify-content:center;max-width:480px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);z-index:100}
+.bottom-nav button{flex:1;padding:12px 0 8px;border:none;background:transparent;color:var(--text-muted);font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.3px;text-transform:uppercase;transition:color 0.15s ease}
+.bottom-nav button:active{transform:scale(0.95)}
+.bottom-nav button.active{color:var(--green)}
+.nav-icon{font-size:20px;line-height:1}
+
+/* --- Stats --- */
 .stats-row{display:flex;gap:10px;margin-bottom:12px}
-.stat-card{flex:1;background:#161616;border-radius:14px;padding:16px;border:1px solid #222;display:flex;flex-direction:column;align-items:center}
-.stat-value{font-size:28px;font-weight:700;color:#4ade80}
-.stat-label{font-size:12px;color:#666;margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
-.section-title{font-size:15px;font-weight:600;margin:0 0 14px;color:#ccc}
+.stat-card{flex:1;background:var(--surface);border-radius:14px;padding:16px;border:1px solid var(--surface-border);display:flex;flex-direction:column;align-items:center}
+.stat-value{font-size:28px;font-weight:700;color:var(--green)}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* --- Cards --- */
+.card{background:var(--surface);border-radius:16px;padding:16px;border:1px solid var(--surface-border);margin-bottom:12px}
+.section-title{font-size:14px;font-weight:600;margin:0 0 14px;color:#ccc}
+
+/* --- 7-Day Grid --- */
 .week-grid{display:flex;justify-content:space-between;gap:4px}
-.day-col{display:flex;flex-direction:column;align-items:center;gap:6px}
-.dot{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
-.day-label{font-size:10px;color:#666;font-weight:600}
-.legend-row{display:flex;justify-content:center;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid #222}
-.legend-item{font-size:11px;color:#666;display:flex;align-items:center;gap:4px}
-.legend-dot{width:8px;height:8px;border-radius:4px;display:inline-block}
-.legend-swatch{width:12px;height:12px;border-radius:3px;display:inline-block}
-.weekly-chart{display:flex;flex-direction:column;gap:14px}
+.day-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.grid-dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.day-label{font-size:10px;color:var(--text-muted);font-weight:600}
+.legend-row{display:flex;justify-content:center;gap:14px;margin-top:12px;padding-top:12px;border-top:1px solid #1e1e1e}
+.legend-item{font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.legend-dot{width:7px;height:7px;border-radius:4px;display:inline-block}
+
+/* --- Weekly Chart --- */
+.weekly-chart{display:flex;flex-direction:column;gap:12px}
 .week-row{display:flex;gap:10px;align-items:flex-start}
-.week-label{font-size:12px;font-weight:600;color:#666;min-width:36px;padding-top:2px}
-.bar-group{flex:1;display:flex;flex-direction:column;gap:4px}
+.week-label{font-size:11px;font-weight:600;color:var(--text-muted);min-width:34px;padding-top:2px}
+.bar-group{flex:1;display:flex;flex-direction:column;gap:3px}
 .bar-row{display:flex;align-items:center;gap:6px}
-.bar-label{font-size:10px;color:#555;min-width:48px}
-.bar-track{flex:1;height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden}
-.bar{height:100%;border-radius:4px;transition:width 0.3s ease;min-width:2px}
-.empty-text{font-size:13px;color:#555;line-height:1.6;text-align:center;padding:12px 0}
-.insight-item{font-size:13px;color:#999;line-height:1.5;margin-bottom:10px}
-.insight-item strong{color:#ccc}
+.bar-label{font-size:10px;color:var(--text-dim);min-width:48px}
+.bar-track{flex:1;height:6px;background:#1e1e1e;border-radius:3px;overflow:hidden}
+.bar{height:100%;border-radius:3px;transition:width 0.3s ease;min-width:2px}
+
+/* --- Calendar --- */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
-.cal-day.good{background:#1a2e1a;border:1px solid #2a4a2a}
-.cal-day.missed{background:#2e1a1a;border:1px solid #4a2a2a}
-.cal-day.empty{background:#1a1a1a;border:1px solid #222}
-.cal-day.today{box-shadow:0 0 0 2px #4ade80}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cal-day.good{background:var(--green-bg);border:1px solid var(--green-border)}
+.cal-day.missed{background:var(--red-bg);border:1px solid var(--red-border)}
+.cal-day.empty{background:#1a1a1a;border:1px solid var(--surface-border)}
+.cal-day.today{box-shadow:0 0 0 2px var(--green)}
 .cal-day-num{font-size:12px;font-weight:600;color:#888}
 .cal-dots{display:flex;gap:2px;margin-top:2px}
 .mini-dot{width:5px;height:5px;border-radius:3px;display:inline-block}
-.cal-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid #222}
+.cal-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid #1e1e1e}
+
+/* --- History Entries --- */
 .entry-row{padding:12px 0;border-bottom:1px solid #1e1e1e}
+.entry-row:last-child{border-bottom:none}
 .entry-date{display:flex;gap:8px;align-items:baseline;margin-bottom:6px}
 .entry-day{font-size:13px;font-weight:700;color:#888}
-.entry-date-num{font-size:12px;color:#555}
+.entry-date-num{font-size:12px;color:var(--text-dim)}
 .entry-details{display:flex;flex-wrap:wrap;gap:6px}
 .entry-pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid #333;color:#888}
-.entry-notes{font-size:12px;color:#666;margin-top:8px;font-style:italic;line-height:1.4}
+.entry-notes{font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic;line-height:1.4}
+
+/* --- Backup --- */
+.backup-banner{background:#1a2a3a;border:1px solid #2a4a6a;border-radius:12px;padding:12px 14px;font-size:13px;color:#60a5fa;text-align:center;font-weight:500;margin-bottom:12px;cursor:pointer}
+.backup-banner:active{transform:scale(0.98)}
 .backup-row{display:flex;gap:8px;margin-bottom:12px}
-.backup-btn{flex:1;padding:14px 0;border:1px solid #333;background:#1a1a1a;color:#888;font-size:13px;font-weight:600;cursor:pointer;border-radius:10px;font-family:inherit;transition:all 0.15s ease;text-align:center}
+.backup-btn{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;border:1px solid #333;background:#1a1a1a;color:#888;font-size:13px;font-weight:600;cursor:pointer;border-radius:10px;font-family:inherit;transition:all 0.15s ease}
 .backup-btn:active{transform:scale(0.95)}
-.hidden{display:none}
+
+/* --- Empty/Misc --- */
+.empty-text{font-size:13px;color:var(--text-dim);line-height:1.6;text-align:center;padding:12px 0}
+.insight-toggle{font-size:13px;color:var(--text-dim);text-align:center;padding:12px 0;cursor:pointer;font-family:inherit;border:none;background:none;width:100%}
+.insight-item{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:10px}
+.insight-item strong{color:#ccc}
 </style>
 </head>
 <body>
@@ -101,14 +157,15 @@ const STORAGE_KEY = "gut-tracker-v1";
 const IDB_NAME = "gut-tracker-db";
 const IDB_STORE = "data";
 const PROTOCOL_DAYS = 84;
-const sugarLabels = ["None", "Low", "Moderate", "Heavy"];
-const painLabels = ["None", "Mild", "Moderate", "Severe"];
-const cravingLabels = ["None", "Low", "Moderate", "Intense"];
-const sugarColors = ["#4ade80", "#a3e635", "#fbbf24", "#f87171"];
-const painColors = ["#4ade80", "#fbbf24", "#f97316", "#ef4444"];
-const cravingColors = ["#4ade80", "#a3e635", "#fbbf24", "#f87171"];
+
+const TRACKERS = {
+  sugarLevel:   { labels: ["None","Low","Moderate","Heavy"],   colors: ["#4ade80","#a3e635","#fbbf24","#f87171"], selClass: ["sel-0","sel-1","sel-2","sel-3"] },
+  painLevel:    { labels: ["None","Mild","Moderate","Severe"], colors: ["#4ade80","#fbbf24","#f97316","#ef4444"], selClass: ["sel-pain-0","sel-pain-1","sel-pain-2","sel-pain-3"] },
+  cravingLevel: { labels: ["None","Low","Moderate","Intense"], colors: ["#4ade80","#a3e635","#fbbf24","#f87171"], selClass: ["sel-0","sel-1","sel-2","sel-3"] }
+};
 
 function todayStr() { return new Date().toISOString().split("T")[0]; }
+function yesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().split("T")[0]; }
 
 let state = {
   entries: {},
@@ -117,10 +174,11 @@ let state = {
   currentEntry: { date: todayStr(), tookProbiotic: null, sugarLevel: null, painLevel: null, cravingLevel: null, notes: "" },
   view: "log",
   savedToday: false,
-  notesExpanded: false
+  notesExpanded: false,
+  showInsights: false
 };
 
-// --- IndexedDB helpers ---
+// --- IndexedDB ---
 function openIDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(IDB_NAME, 1);
@@ -129,7 +187,6 @@ function openIDB() {
     req.onerror = () => reject(req.error);
   });
 }
-
 async function idbSave(data) {
   try {
     const db = await openIDB();
@@ -137,9 +194,8 @@ async function idbSave(data) {
     tx.objectStore(IDB_STORE).put(data, "main");
     await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
     db.close();
-  } catch (e) { console.log("IDB save failed:", e); }
+  } catch (e) {}
 }
-
 async function idbLoad() {
   try {
     const db = await openIDB();
@@ -148,33 +204,25 @@ async function idbLoad() {
     const result = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = rej; });
     db.close();
     return result || null;
-  } catch (e) { console.log("IDB load failed:", e); return null; }
+  } catch (e) { return null; }
 }
 
 // --- Storage ---
 function getStorageData() {
   return { entries: state.entries, startDate: state.startDate, lastBackup: state.lastBackup };
 }
-
 function saveData() {
   const data = getStorageData();
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { console.error("LS save failed"); }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
   idbSave(data);
 }
-
 async function loadData() {
   let lsData = null, idbData = null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) lsData = JSON.parse(raw);
-  } catch (e) {}
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) lsData = JSON.parse(raw); } catch (e) {}
   idbData = await idbLoad();
-
-  // Pick whichever has more entries
   const lsCount = lsData ? Object.keys(lsData.entries || {}).length : 0;
   const idbCount = idbData ? Object.keys(idbData.entries || {}).length : 0;
   const best = idbCount > lsCount ? idbData : (lsData || idbData);
-
   if (best) {
     state.entries = best.entries || {};
     state.startDate = best.startDate || null;
@@ -183,7 +231,6 @@ async function loadData() {
       state.currentEntry = { ...state.entries[todayStr()] };
       state.savedToday = true;
     }
-    // Sync both stores
     saveData();
   }
 }
@@ -208,6 +255,7 @@ function getCompletionRate() {
   if (!k.length) return 0;
   return Math.round(k.filter(x => state.entries[x].tookProbiotic === true).length / k.length * 100);
 }
+function getYesterday() { return state.entries[yesterdayStr()] || null; }
 function getLast7() {
   const days = [];
   for (let i = 6; i >= 0; i--) {
@@ -243,12 +291,20 @@ function needsBackupReminder() {
   const logged = Object.keys(state.entries).length;
   if (logged < 7) return false;
   if (!state.lastBackup) return true;
-  const daysSince = Math.floor((new Date(todayStr()) - new Date(state.lastBackup)) / 864e5);
-  return daysSince >= 7;
+  return Math.floor((new Date(todayStr()) - new Date(state.lastBackup)) / 864e5) >= 7;
+}
+function isTodayComplete() {
+  const e = state.currentEntry;
+  return e.tookProbiotic !== null && e.sugarLevel !== null && e.painLevel !== null && e.cravingLevel !== null;
 }
 
 // --- Actions ---
-function saveEntry() {
+function setView(v) { state.view = v; render(); }
+function expandNotes() { state.notesExpanded = true; render(); setTimeout(() => { const el = document.getElementById("notesField"); if (el) el.focus(); }, 0); }
+function toggleInsights() { state.showInsights = !state.showInsights; render(); }
+
+function updateEntry(field, val) {
+  state.currentEntry[field] = val;
   state.entries[todayStr()] = { ...state.currentEntry, date: todayStr() };
   if (!state.startDate) state.startDate = todayStr();
   state.savedToday = true;
@@ -256,12 +312,7 @@ function saveEntry() {
   render();
 }
 
-function setView(v) { state.view = v; render(); }
-function expandNotes() { state.notesExpanded = true; render(); setTimeout(() => { const el = document.getElementById("notesField"); if (el) el.focus(); }, 0); }
-
-function updateEntry(field, val) {
-  state.currentEntry[field] = val;
-  // Auto-save
+function saveEntry() {
   state.entries[todayStr()] = { ...state.currentEntry, date: todayStr() };
   if (!state.startDate) state.startDate = todayStr();
   state.savedToday = true;
@@ -274,39 +325,27 @@ function exportBackup() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = "gut-protocol-backup-" + todayStr() + ".json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.download = "gut-protocol-backup-" + todayStr() + ".json";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
   state.lastBackup = todayStr();
-  saveData();
-  render();
+  saveData(); render();
 }
-
 function importBackup() {
   const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json";
-  input.onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  input.type = "file"; input.accept = ".json";
+  input.onchange = async (ev) => {
+    const file = ev.target.files[0]; if (!file) return;
     try {
-      const text = await file.text();
-      const data = JSON.parse(text);
+      const data = JSON.parse(await file.text());
       if (data.entries) {
         state.entries = data.entries;
         state.startDate = data.startDate || state.startDate;
         state.lastBackup = data.lastBackup || state.lastBackup;
-        if (state.entries[todayStr()]) {
-          state.currentEntry = { ...state.entries[todayStr()] };
-          state.savedToday = true;
-        }
-        saveData();
-        render();
+        if (state.entries[todayStr()]) { state.currentEntry = { ...state.entries[todayStr()] }; state.savedToday = true; }
+        saveData(); render();
       }
-    } catch (err) { console.error("Import failed:", err); }
+    } catch (err) {}
   };
   input.click();
 }
@@ -316,157 +355,217 @@ function render() {
   const app = document.getElementById("app");
   const notesEl = document.getElementById("notesField");
   const notesFocused = notesEl && document.activeElement === notesEl;
-  const notesSelStart = notesFocused ? notesEl.selectionStart : null;
-  const notesSelEnd = notesFocused ? notesEl.selectionEnd : null;
+  const notesSel = notesFocused ? [notesEl.selectionStart, notesEl.selectionEnd] : null;
 
   const dn = getDayNum(); const wn = getWeekNum(); const streak = getStreak();
+  const todayFmt = new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+  const started = !!state.startDate;
 
-  const todayFormatted = new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  // Header
+  let html = `<div class="header">`;
+  html += `<div class="header-date">${todayFmt}${started ? ` \u00b7 Day ${dn} of ${PROTOCOL_DAYS}` : ""}</div>`;
+  html += `<div class="streak-hero ${streak === 0 ? "streak-zero" : ""}">`;
+  html += `<span class="streak-fire">\ud83d\udd25</span>`;
+  html += `<div><span class="streak-count">${streak}</span><div class="streak-unit">day streak</div></div>`;
+  html += `</div>`;
+  if (started) {
+    const pct = Math.min(dn / PROTOCOL_DAYS * 100, 100);
+    html += `<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+    html += `<div class="progress-label"><span>Week ${wn}</span><span>${Math.round(pct)}%</span><span>Week 12</span></div></div>`;
+  }
+  html += `</div>`;
 
-  let html = `<div class="header"><div class="header-top"><div><h1>Gut Protocol</h1><p class="subtitle">${todayFormatted} ${state.startDate ? `\u00b7 Day ${dn} of 84 \u00b7 Week ${wn}` : "\u2014 Start your 12-week protocol"}</p></div>${state.startDate ? `<div class="streak"><span class="streak-num">${streak}</span><span class="streak-label">day streak</span></div>` : ""}</div>${state.startDate ? `<div class="progress-outer"><div class="progress-inner" style="width:${Math.min(dn / PROTOCOL_DAYS * 100, 100)}%"></div></div>` : ""}</div>`;
-
-  html += `<div class="nav"><button class="${state.view === "log" ? "active" : ""}" onclick="setView('log')">Today</button><button class="${state.view === "trends" ? "active" : ""}" onclick="setView('trends')">Trends</button><button class="${state.view === "history" ? "active" : ""}" onclick="setView('history')">History</button></div>`;
-
+  // Content
   html += `<div class="content">`;
   if (state.view === "log") html += renderLog();
   else if (state.view === "trends") html += renderTrends();
   else html += renderHistory();
   html += `</div>`;
+
+  // Bottom Nav
+  html += `<div class="bottom-nav">`;
+  html += `<button class="${state.view === "log" ? "active" : ""}" onclick="setView('log')"><span class="nav-icon">\u2b24</span>Today</button>`;
+  html += `<button class="${state.view === "trends" ? "active" : ""}" onclick="setView('trends')"><span class="nav-icon">\u2191</span>Trends</button>`;
+  html += `<button class="${state.view === "history" ? "active" : ""}" onclick="setView('history')"><span class="nav-icon">\u2630</span>History</button>`;
+  html += `</div>`;
+
   app.innerHTML = html;
 
-  // Restore textarea focus
   if (notesFocused) {
-    const newNotes = document.getElementById("notesField");
-    if (newNotes) {
-      newNotes.focus();
-      newNotes.selectionStart = notesSelStart;
-      newNotes.selectionEnd = notesSelEnd;
-    }
+    const n = document.getElementById("notesField");
+    if (n) { n.focus(); n.selectionStart = notesSel[0]; n.selectionEnd = notesSel[1]; }
   }
-}
-
-function scaleBtn(field, labels, colors, val) {
-  return labels.map((l, i) => {
-    const sel = val === i;
-    const style = sel ? `background:${colors[i]};color:${i < 2 ? "#1a2e1a" : "#fff"};border-color:${colors[i]}` : "";
-    return `<button class="scale-btn" style="${style}" onclick="updateEntry('${field}',${i})">${l}</button>`;
-  }).join("");
 }
 
 function renderLog() {
   const e = state.currentEntry;
+  const y = getYesterday();
   let h = "";
 
-  // Tracking cards
-  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83d\udc8a</span><span class="card-title">Akkermansia + Polyphenol</span></div><div class="toggle-row"><button class="toggle-btn ${e.tookProbiotic === true ? "yes" : ""}" onclick="updateEntry('tookProbiotic',true)">Taken</button><button class="toggle-btn ${e.tookProbiotic === false ? "no" : ""}" onclick="updateEntry('tookProbiotic',false)">Missed</button></div></div>`;
+  // Unified tracker card
+  h += `<div class="tracker">`;
 
-  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83c\udf6c</span><span class="card-title">Sugar / Candy Intake</span></div><div class="scale-row">${scaleBtn("sugarLevel", sugarLabels, sugarColors, e.sugarLevel)}</div></div>`;
+  // Supplement
+  const yProb = y?.tookProbiotic;
+  h += `<div class="tracker-item"><div class="tracker-label"><span class="tracker-name"><span>\ud83d\udc8a</span> Supplement</span>`;
+  if (yProb !== undefined && yProb !== null) h += `<span class="tracker-yesterday">Yesterday: ${yProb ? "Taken" : "Missed"}</span>`;
+  h += `</div><div class="btn-row">`;
+  h += `<button class="btn${e.tookProbiotic === true ? " sel-green" : ""}" onclick="updateEntry('tookProbiotic',true)">Taken</button>`;
+  h += `<button class="btn${e.tookProbiotic === false ? " sel-red" : ""}" onclick="updateEntry('tookProbiotic',false)">Missed</button>`;
+  h += `</div></div>`;
 
-  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83d\udccd</span><span class="card-title">Lower Right Pain</span></div><div class="scale-row">${scaleBtn("painLevel", painLabels, painColors, e.painLevel)}</div></div>`;
+  // Scale trackers
+  const scales = [
+    { field: "sugarLevel", icon: "\ud83c\udf6c", name: "Sugar Intake", tracker: TRACKERS.sugarLevel },
+    { field: "painLevel",  icon: "\ud83d\udccd", name: "Lower Right Pain", tracker: TRACKERS.painLevel },
+    { field: "cravingLevel", icon: "\ud83e\udde0", name: "Cravings", tracker: TRACKERS.cravingLevel }
+  ];
 
-  h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83e\udde0</span><span class="card-title">Sugar Cravings</span></div><div class="scale-row">${scaleBtn("cravingLevel", cravingLabels, cravingColors, e.cravingLevel)}</div></div>`;
+  scales.forEach(({ field, icon, name, tracker }) => {
+    const val = e[field];
+    const yVal = y?.[field];
+    h += `<div class="tracker-item"><div class="tracker-label"><span class="tracker-name"><span>${icon}</span> ${name}</span>`;
+    if (yVal !== undefined && yVal !== null) h += `<span class="tracker-yesterday">Yesterday: ${tracker.labels[yVal]}</span>`;
+    h += `</div><div class="btn-row btn-row-4">`;
+    tracker.labels.forEach((label, i) => {
+      const sel = val === i ? ` ${tracker.selClass[i]}` : "";
+      h += `<button class="btn btn-sm${sel}" onclick="updateEntry('${field}',${i})">${label}</button>`;
+    });
+    h += `</div></div>`;
+  });
 
-  // Completion state
+  h += `</div>`;
+
+  // Completion / Progress
   const filled = [e.tookProbiotic !== null, e.sugarLevel !== null, e.painLevel !== null, e.cravingLevel !== null];
-  const filledCount = filled.filter(Boolean).length;
-  const allDone = filledCount === 4;
+  const allDone = filled.every(Boolean);
 
   if (allDone) {
-    h += `<div class="completion-card">\u2713 All logged for today</div>`;
+    h += `<div class="completion done"><span class="completion-check">\u2713</span><span class="completion-text">All logged for today</span></div>`;
   } else {
-    h += `<div class="progress-dots">${filled.map(f => `<span class="progress-dot${f ? " filled" : ""}"></span>`).join("")}</div>`;
+    h += `<div class="completion pending"><div class="dot-row">${filled.map(f => `<span class="dot-indicator${f ? " filled" : ""}"></span>`).join("")}</div></div>`;
   }
 
-  // Notes — collapsed by default
+  // Notes
   const showNotes = state.notesExpanded || (e.notes && e.notes.length > 0);
   if (showNotes) {
-    h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83d\udcdd</span><span class="card-title">Notes</span></div><textarea id="notesField" placeholder="How are you feeling? Any symptoms worth noting..." rows="3" oninput="state.currentEntry.notes=this.value;saveEntry()">${e.notes || ""}</textarea></div>`;
+    h += `<div class="notes-card"><textarea id="notesField" placeholder="How are you feeling today?" rows="3" oninput="state.currentEntry.notes=this.value;saveEntry()">${e.notes || ""}</textarea></div>`;
   } else {
-    h += `<div class="notes-trigger" onclick="expandNotes()">Add a note\u2026</div>`;
+    h += `<div class="notes-tap" onclick="expandNotes()">Add a note\u2026</div>`;
   }
 
-  // Subtle saved hint
+  // Saved hint
   h += `<div class="saved-hint${state.savedToday ? " visible" : ""}">Saved</div>`;
 
   return h;
 }
 
 function renderTrends() {
-  const last7 = getLast7(); const wa = getWeeklyAvg(); const cr = getCompletionRate(); const td = Object.keys(state.entries).length;
+  const last7 = getLast7(); const wa = getWeeklyAvg();
+  const cr = getCompletionRate(); const td = Object.keys(state.entries).length;
+
   let h = `<div class="stats-row"><div class="stat-card"><span class="stat-value">${cr}%</span><span class="stat-label">Compliance</span></div><div class="stat-card"><span class="stat-value">${td}</span><span class="stat-label">Days Logged</span></div></div>`;
 
+  // 7-day grid
   h += `<div class="card"><h3 class="section-title">Last 7 Days</h3><div class="week-grid">`;
+  const T = TRACKERS;
   last7.forEach(d => {
-    const e = d.entry;
+    const en = d.entry;
     function dot(val, colors, label) {
-      const bg = val != null ? colors[val] : "#3a3a3a"; const op = val != null ? 1 : 0.3;
+      const bg = val != null ? colors[val] : "#2a2a2a";
+      const op = val != null ? 1 : 0.25;
       const tc = val != null && val < 2 ? "#1a2e1a" : "#fff";
-      return `<div class="dot" style="background:${bg};opacity:${op}"><span style="color:${tc}">${label}</span></div>`;
+      return `<div class="grid-dot" style="background:${bg};opacity:${op}"><span style="color:${tc}">${label}</span></div>`;
     }
-    const probBg = e?.tookProbiotic === true ? "#4ade80" : e?.tookProbiotic === false ? "#f87171" : "#3a3a3a";
-    const probTxt = e?.tookProbiotic === true ? "\u2713" : e?.tookProbiotic === false ? "\u2717" : "\u00b7";
-    h += `<div class="day-col"><div style="display:flex;flex-direction:column;gap:4px">${dot(e?.sugarLevel ?? null, sugarColors, "S")}${dot(e?.painLevel ?? null, painColors, "P")}${dot(e?.cravingLevel ?? null, cravingColors, "C")}<div class="dot" style="background:${probBg};color:#fff;font-size:12px;font-weight:700">${probTxt}</div></div><span class="day-label">${d.label}</span></div>`;
+    const probBg = en?.tookProbiotic === true ? "#4ade80" : en?.tookProbiotic === false ? "#f87171" : "#2a2a2a";
+    const probOp = en?.tookProbiotic != null ? 1 : 0.25;
+    const probTxt = en?.tookProbiotic === true ? "\u2713" : en?.tookProbiotic === false ? "\u2717" : "\u00b7";
+    h += `<div class="day-col"><div style="display:flex;flex-direction:column;gap:3px">`;
+    h += dot(en?.sugarLevel ?? null, T.sugarLevel.colors, "S");
+    h += dot(en?.painLevel ?? null, T.painLevel.colors, "P");
+    h += dot(en?.cravingLevel ?? null, T.cravingLevel.colors, "C");
+    h += `<div class="grid-dot" style="background:${probBg};opacity:${probOp};color:#fff;font-size:12px;font-weight:700">${probTxt}</div>`;
+    h += `</div><span class="day-label">${d.label}</span></div>`;
   });
-  h += `</div><div class="legend-row"><span class="legend-item"><span class="legend-dot" style="background:#888"></span> S = Sugar</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span> P = Pain</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span> C = Cravings</span></div></div>`;
+  h += `</div><div class="legend-row"><span class="legend-item"><span class="legend-dot" style="background:#888"></span>S = Sugar</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span>P = Pain</span><span class="legend-item"><span class="legend-dot" style="background:#888"></span>C = Cravings</span></div></div>`;
 
+  // Weekly averages
   if (wa.length > 1) {
     h += `<div class="card"><h3 class="section-title">Weekly Averages</h3><div class="weekly-chart">`;
     wa.forEach((w, i) => {
       h += `<div class="week-row"><span class="week-label">Wk ${i + 1}</span><div class="bar-group">`;
-      if (w.sugar !== null) h += `<div class="bar-row"><span class="bar-label">Sugar</span><div class="bar-track"><div class="bar" style="width:${(w.sugar / 3) * 100}%;background:${sugarColors[Math.round(w.sugar)]}"></div></div></div>`;
-      if (w.pain !== null) h += `<div class="bar-row"><span class="bar-label">Pain</span><div class="bar-track"><div class="bar" style="width:${(w.pain / 3) * 100}%;background:${painColors[Math.round(w.pain)]}"></div></div></div>`;
-      if (w.craving !== null) h += `<div class="bar-row"><span class="bar-label">Cravings</span><div class="bar-track"><div class="bar" style="width:${(w.craving / 3) * 100}%;background:${cravingColors[Math.round(w.craving)]}"></div></div></div>`;
+      if (w.sugar !== null) h += `<div class="bar-row"><span class="bar-label">Sugar</span><div class="bar-track"><div class="bar" style="width:${(w.sugar / 3) * 100}%;background:${T.sugarLevel.colors[Math.round(w.sugar)]}"></div></div></div>`;
+      if (w.pain !== null) h += `<div class="bar-row"><span class="bar-label">Pain</span><div class="bar-track"><div class="bar" style="width:${(w.pain / 3) * 100}%;background:${T.painLevel.colors[Math.round(w.pain)]}"></div></div></div>`;
+      if (w.craving !== null) h += `<div class="bar-row"><span class="bar-label">Cravings</span><div class="bar-track"><div class="bar" style="width:${(w.craving / 3) * 100}%;background:${T.cravingLevel.colors[Math.round(w.craving)]}"></div></div></div>`;
       h += `</div></div>`;
     });
     h += `</div></div>`;
   } else {
-    h += `<div class="card"><p class="empty-text">Weekly trend data will appear after your first full week of logging.</p></div>`;
+    h += `<div class="card"><p class="empty-text">Weekly trends appear after your first full week.</p></div>`;
   }
 
-  h += `<div class="card"><h3 class="section-title">What to Watch For</h3><p class="insight-item"><strong>Weeks 1-2:</strong> Sugar withdrawal may spike cravings and pain temporarily. Stay the course.</p><p class="insight-item"><strong>Weeks 3-4:</strong> Akkermansia colonization begins. Watch for reduced bloating and craving shifts.</p><p class="insight-item"><strong>Weeks 6-8:</strong> If pain frequency drops alongside sugar reduction, strong signal it\u2019s ICV-related.</p><p class="insight-item"><strong>Week 12:</strong> Full protocol complete. Compare Week 1 vs Week 12 data for your answer.</p></div>`;
+  // Collapsible insights
+  h += `<div class="card">`;
+  h += `<button class="insight-toggle" onclick="toggleInsights()">${state.showInsights ? "Hide" : "Show"} Protocol Guide \u25BE</button>`;
+  if (state.showInsights) {
+    h += `<p class="insight-item"><strong>Weeks 1\u20132:</strong> Sugar withdrawal may spike cravings and pain. Stay the course.</p>`;
+    h += `<p class="insight-item"><strong>Weeks 3\u20134:</strong> Akkermansia colonization begins. Watch for reduced bloating.</p>`;
+    h += `<p class="insight-item"><strong>Weeks 6\u20138:</strong> If pain drops with sugar reduction, strong ICV signal.</p>`;
+    h += `<p class="insight-item"><strong>Week 12:</strong> Protocol complete. Compare Week 1 vs 12 for your answer.</p>`;
+  }
+  h += `</div>`;
+
   return h;
 }
 
 function renderHistory() {
   const last30 = getLast30(); const td = todayStr();
-
   let h = "";
+
   if (needsBackupReminder()) {
-    h += `<div class="backup-banner" onclick="exportBackup()">It's been a week \u2014 tap to back up your data</div>`;
+    h += `<div class="backup-banner" onclick="exportBackup()">It\u2019s been a week \u2014 tap to back up your data</div>`;
   }
-  h += `<div class="backup-row"><button class="backup-btn" onclick="exportBackup()">\u2b07 Backup Data</button><button class="backup-btn" onclick="importBackup()">\u2b06 Restore Backup</button></div>`;
 
+  h += `<div class="backup-row"><button class="backup-btn" onclick="exportBackup()">\u2b07 Backup</button><button class="backup-btn" onclick="importBackup()">\u2b06 Restore</button></div>`;
   if (state.lastBackup) {
-    h += `<div style="font-size:11px;color:#555;text-align:center;margin:-6px 0 12px">Last backup: ${new Date(state.lastBackup + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>`;
+    h += `<div style="font-size:11px;color:var(--text-dim);text-align:center;margin:-6px 0 12px">Last backup: ${new Date(state.lastBackup + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}</div>`;
   }
 
+  // Calendar
   h += `<div class="card"><h3 class="section-title">Last 30 Days</h3><div class="cal-grid">`;
   last30.forEach(day => {
-    const d = new Date(day.date + "T12:00:00"); const dn = d.getDate(); const has = !!day.entry; const took = day.entry?.tookProbiotic === true;
+    const d = new Date(day.date + "T12:00:00"); const dn = d.getDate();
+    const has = !!day.entry; const took = day.entry?.tookProbiotic === true;
     let cls = "cal-day " + (has ? (took ? "good" : "missed") : "empty") + (day.date === td ? " today" : "");
     let dots = "";
     if (has) {
-      if (day.entry.painLevel > 0) dots += `<span class="mini-dot" style="background:${painColors[day.entry.painLevel]}"></span>`;
-      if (day.entry.sugarLevel > 1) dots += `<span class="mini-dot" style="background:${sugarColors[day.entry.sugarLevel]}"></span>`;
+      if (day.entry.painLevel > 0) dots += `<span class="mini-dot" style="background:${TRACKERS.painLevel.colors[day.entry.painLevel]}"></span>`;
+      if (day.entry.sugarLevel > 1) dots += `<span class="mini-dot" style="background:${TRACKERS.sugarLevel.colors[day.entry.sugarLevel]}"></span>`;
     }
     h += `<div class="${cls}"><span class="cal-day-num">${dn}</span>${dots ? `<div class="cal-dots">${dots}</div>` : ""}</div>`;
   });
-  h += `</div><div class="cal-legend"><span class="legend-item"><span class="legend-swatch" style="background:#1a2e1a"></span> Taken</span><span class="legend-item"><span class="legend-swatch" style="background:#2e1a1a"></span> Missed</span><span class="legend-item"><span class="legend-swatch" style="background:#1a1a1a"></span> No data</span><span class="legend-item"><span class="mini-dot" style="background:#f97316;position:relative"></span> Pain</span><span class="legend-item"><span class="mini-dot" style="background:#fbbf24;position:relative"></span> High sugar</span></div></div>`;
+  h += `</div><div class="cal-legend">`;
+  h += `<span class="legend-item"><span class="legend-dot" style="background:var(--green-bg);border:1px solid var(--green-border)"></span>Taken</span>`;
+  h += `<span class="legend-item"><span class="legend-dot" style="background:var(--red-bg);border:1px solid var(--red-border)"></span>Missed</span>`;
+  h += `<span class="legend-item"><span class="legend-dot" style="background:#1a1a1a;border:1px solid var(--surface-border)"></span>No data</span>`;
+  h += `</div></div>`;
 
+  // Recent entries
   const withData = last30.filter(d => d.entry).reverse().slice(0, 7);
   h += `<div class="card"><h3 class="section-title">Recent Entries</h3>`;
   if (withData.length) {
     withData.forEach(day => {
-      const d = new Date(day.date + "T12:00:00"); const e = day.entry;
-      h += `<div class="entry-row"><div class="entry-date"><span class="entry-day">${d.toLocaleDateString("en-US", { weekday: "short" })}</span><span class="entry-date-num">${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></div><div class="entry-details"><span class="entry-pill">${e.tookProbiotic ? "\u2713 Taken" : "\u2717 Missed"}</span>`;
-      if (e.sugarLevel !== null) h += `<span class="entry-pill" style="border-color:${sugarColors[e.sugarLevel]};color:${sugarColors[e.sugarLevel]}">${sugarLabels[e.sugarLevel]}</span>`;
-      if (e.painLevel !== null && e.painLevel > 0) h += `<span class="entry-pill" style="border-color:${painColors[e.painLevel]};color:${painColors[e.painLevel]}">${painLabels[e.painLevel]} pain</span>`;
+      const d = new Date(day.date + "T12:00:00"); const en = day.entry;
+      h += `<div class="entry-row"><div class="entry-date"><span class="entry-day">${d.toLocaleDateString("en-US", { weekday: "short" })}</span><span class="entry-date-num">${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></div><div class="entry-details"><span class="entry-pill">${en.tookProbiotic ? "\u2713 Taken" : "\u2717 Missed"}</span>`;
+      if (en.sugarLevel !== null) h += `<span class="entry-pill" style="border-color:${TRACKERS.sugarLevel.colors[en.sugarLevel]};color:${TRACKERS.sugarLevel.colors[en.sugarLevel]}">${TRACKERS.sugarLevel.labels[en.sugarLevel]}</span>`;
+      if (en.painLevel !== null && en.painLevel > 0) h += `<span class="entry-pill" style="border-color:${TRACKERS.painLevel.colors[en.painLevel]};color:${TRACKERS.painLevel.colors[en.painLevel]}">${TRACKERS.painLevel.labels[en.painLevel]} pain</span>`;
       h += `</div>`;
-      if (e.notes) h += `<p class="entry-notes">${e.notes}</p>`;
+      if (en.notes) h += `<p class="entry-notes">${en.notes}</p>`;
       h += `</div>`;
     });
   } else h += `<p class="empty-text">No entries yet. Start logging today!</p>`;
   h += `</div>`;
+
   return h;
 }
 
