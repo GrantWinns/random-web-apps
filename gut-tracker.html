@@ -267,7 +267,7 @@ function updateEntry(field, val) {
 }
 
 function exportBackup() {
-  const data = getStorageData();
+  const data = { ...getStorageData(), exportDate: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -318,7 +318,9 @@ function render() {
 
   const dn = getDayNum(); const wn = getWeekNum(); const streak = getStreak();
 
-  let html = `<div class="header"><div class="header-top"><div><h1>Gut Protocol</h1><p class="subtitle">${state.startDate ? `Day ${dn} of 84 \u00b7 Week ${wn}` : "Start your 12-week protocol"}</p></div>${state.startDate ? `<div class="streak"><span class="streak-num">${streak}</span><span class="streak-label">day streak</span></div>` : ""}</div>${state.startDate ? `<div class="progress-outer"><div class="progress-inner" style="width:${Math.min(dn / PROTOCOL_DAYS * 100, 100)}%"></div></div>` : ""}</div>`;
+  const todayFormatted = new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+
+  let html = `<div class="header"><div class="header-top"><div><h1>Gut Protocol</h1><p class="subtitle">${todayFormatted} ${state.startDate ? `\u00b7 Day ${dn} of 84 \u00b7 Week ${wn}` : "\u2014 Start your 12-week protocol"}</p></div>${state.startDate ? `<div class="streak"><span class="streak-num">${streak}</span><span class="streak-label">day streak</span></div>` : ""}</div>${state.startDate ? `<div class="progress-outer"><div class="progress-inner" style="width:${Math.min(dn / PROTOCOL_DAYS * 100, 100)}%"></div></div>` : ""}</div>`;
 
   html += `<div class="nav"><button class="${state.view === "log" ? "active" : ""}" onclick="setView('log')">Today</button><button class="${state.view === "trends" ? "active" : ""}" onclick="setView('trends')">Trends</button><button class="${state.view === "history" ? "active" : ""}" onclick="setView('history')">History</button></div>`;
 
