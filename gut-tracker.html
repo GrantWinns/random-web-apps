@@ -49,21 +49,21 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Di
 .btn-sm{font-size:12px}
 .btn.sel-green{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .btn.sel-red{background:var(--red-bg);border-color:var(--red);color:var(--red)}
-.btn.sel-0{background:#1a2e1a;border-color:#4ade80;color:#1a2e1a;font-weight:700}
-.btn.sel-1{background:#2a3a1a;border-color:#a3e635;color:#2a3a1a;font-weight:700}
-.btn.sel-2{background:#3a2e1a;border-color:#fbbf24;color:#3a2e1a;font-weight:700}
-.btn.sel-3{background:#3a1a1a;border-color:#f87171;color:#fff;font-weight:700}
-.btn.sel-pain-0{background:#1a2e1a;border-color:#4ade80;color:#1a2e1a;font-weight:700}
-.btn.sel-pain-1{background:#3a2e1a;border-color:#fbbf24;color:#3a2e1a;font-weight:700}
-.btn.sel-pain-2{background:#3a2a1a;border-color:#f97316;color:#fff;font-weight:700}
-.btn.sel-pain-3{background:#3a1a1a;border-color:#ef4444;color:#fff;font-weight:700}
+.btn.sel-0{background:#1a2e1a;border-color:#4ade80;color:#4ade80;font-weight:700}
+.btn.sel-1{background:#2a3a1a;border-color:#a3e635;color:#a3e635;font-weight:700}
+.btn.sel-2{background:#3a2e1a;border-color:#fbbf24;color:#fbbf24;font-weight:700}
+.btn.sel-3{background:#3a1a1a;border-color:#f87171;color:#f87171;font-weight:700}
+.btn.sel-pain-0{background:#1a2e1a;border-color:#4ade80;color:#4ade80;font-weight:700}
+.btn.sel-pain-1{background:#3a2e1a;border-color:#fbbf24;color:#fbbf24;font-weight:700}
+.btn.sel-pain-2{background:#3a2a1a;border-color:#f97316;color:#f97316;font-weight:700}
+.btn.sel-pain-3{background:#3a1a1a;border-color:#ef4444;color:#ef4444;font-weight:700}
 
 /* --- Completion --- */
-.completion{border-radius:16px;padding:20px;margin-bottom:12px;text-align:center;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.3s ease}
+.completion{border-radius:12px;padding:10px;margin-bottom:12px;text-align:center;min-height:36px;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;transition:all 0.3s ease}
 .completion.pending{background:transparent}
 .completion.done{background:var(--green-bg);border:1px solid var(--green-border)}
-.completion-check{font-size:24px;margin-bottom:4px}
-.completion-text{font-size:14px;font-weight:600;color:var(--green)}
+.completion-check{font-size:14px}
+.completion-text{font-size:13px;font-weight:600;color:var(--green)}
 .completion-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
 .dot-row{display:flex;gap:8px;justify-content:center}
 .dot-indicator{width:10px;height:10px;border-radius:5px;background:#2a2a2a;transition:all 0.2s ease}
@@ -441,7 +441,7 @@ function renderLog() {
   const allDone = filled.every(Boolean);
 
   if (allDone) {
-    h += `<div class="completion done"><span class="completion-check">\u2713</span><span class="completion-text">All logged for today</span></div>`;
+    h += `<div class="completion done"><span class="completion-check">\u2713</span><span class="completion-text">All logged</span></div>`;
   } else {
     h += `<div class="completion pending"><div class="dot-row">${filled.map(f => `<span class="dot-indicator${f ? " filled" : ""}"></span>`).join("")}</div></div>`;
   }
