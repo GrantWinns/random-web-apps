@@ -164,8 +164,9 @@ const TRACKERS = {
   cravingLevel: { labels: ["None","Low","Moderate","Intense"], colors: ["#4ade80","#a3e635","#fbbf24","#f87171"], selClass: ["sel-0","sel-1","sel-2","sel-3"] }
 };
 
-function todayStr() { return new Date().toISOString().split("T")[0]; }
-function yesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().split("T")[0]; }
+function localDateStr(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function todayStr() { return localDateStr(new Date()); }
+function yesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); return localDateStr(d); }
 
 let state = {
   entries: {},
@@ -244,7 +245,7 @@ function getWeekNum() { return Math.ceil(getDayNum() / 7); }
 function getStreak() {
   let s = 0; const d = new Date(todayStr());
   while (true) {
-    const k = d.toISOString().split("T")[0];
+    const k = localDateStr(d);
     if (state.entries[k] && state.entries[k].tookProbiotic === true) { s++; d.setDate(d.getDate() - 1); }
     else break;
   }
@@ -260,7 +261,7 @@ function getLast7() {
   const days = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i);
-    const k = d.toISOString().split("T")[0];
+    const k = localDateStr(d);
     days.push({ date: k, label: d.toLocaleDateString("en-US", { weekday: "short" }), entry: state.entries[k] || null });
   }
   return days;
@@ -269,7 +270,7 @@ function getLast30() {
   const days = [];
   for (let i = 29; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i);
-    const k = d.toISOString().split("T")[0];
+    const k = localDateStr(d);
     days.push({ date: k, entry: state.entries[k] || null });
   }
   return days;
@@ -278,7 +279,7 @@ function getWeeklyAvg() {
   const weeks = {};
   Object.values(state.entries).forEach(e => {
     const d = new Date(e.date); const ws = new Date(d); ws.setDate(d.getDate() - d.getDay());
-    const wk = ws.toISOString().split("T")[0];
+    const wk = localDateStr(ws);
     if (!weeks[wk]) weeks[wk] = [];
     weeks[wk].push(e);
   });
