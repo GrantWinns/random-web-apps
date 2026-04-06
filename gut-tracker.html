@@ -38,8 +38,10 @@ h1{font-size:28px;font-weight:700;letter-spacing:-0.5px}
 .scale-btn{padding:10px 4px;font-size:11px}
 .toggle-btn.yes{background:#1a3a2a;border-color:#4ade80;color:#4ade80}
 .toggle-btn.no{background:#3a1a1a;border-color:#f87171;color:#f87171}
-.saved-banner{background:#1a2e1a;border:1px solid #2a4a2a;border-radius:10px;padding:10px 14px;font-size:13px;color:#4ade80;text-align:center;font-weight:500;margin-bottom:12px}
-.backup-banner{background:#1a2a3a;border:1px solid #2a4a6a;border-radius:10px;padding:10px 14px;font-size:13px;color:#60a5fa;text-align:center;font-weight:500;margin-bottom:12px;cursor:pointer}
+.saved-banner{background:#1a2e1a;border:1px solid #2a4a2a;border-radius:10px;padding:10px 14px;font-size:13px;color:#4ade80;text-align:center;font-weight:500;margin-bottom:12px;visibility:visible}
+.saved-banner.placeholder{visibility:hidden}
+.backup-banner{background:#1a2a3a;border:1px solid #2a4a6a;border-radius:10px;padding:10px 14px;font-size:13px;color:#60a5fa;text-align:center;font-weight:500;margin-bottom:12px;cursor:pointer;visibility:visible}
+.backup-banner.placeholder{visibility:hidden}
 textarea{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;color:#ccc;font-size:14px;font-family:inherit;resize:vertical;outline:none}
 .save-btn{width:100%;padding:16px 0;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:16px;font-weight:700;cursor:pointer;border-radius:14px;font-family:inherit;margin-top:4px;margin-bottom:12px;transition:transform 0.1s ease}
 .save-btn:active{transform:scale(0.98)}
@@ -350,11 +352,10 @@ function renderLog() {
   const e = state.currentEntry;
   let h = "";
 
-  if (needsBackupReminder()) {
-    h += `<div class="backup-banner" onclick="exportBackup()">It's been a week \u2014 tap to back up your data</div>`;
-  }
+  const showBackup = needsBackupReminder();
+  h += `<div class="backup-banner${showBackup ? "" : " placeholder"}"${showBackup ? ` onclick="exportBackup()"` : ""}>It's been a week \u2014 tap to back up your data</div>`;
 
-  if (state.savedToday) h += `<div class="saved-banner">\u2713 Auto-saved \u2014 tap any field to update</div>`;
+  h += `<div class="saved-banner${state.savedToday ? "" : " placeholder"}">\u2713 Auto-saved \u2014 tap any field to update</div>`;
 
   h += `<div class="card"><div class="card-header"><span class="card-icon">\ud83d\udc8a</span><span class="card-title">Akkermansia + Polyphenol</span></div><div class="toggle-row"><button class="toggle-btn ${e.tookProbiotic === true ? "yes" : ""}" onclick="updateEntry('tookProbiotic',true)">Taken</button><button class="toggle-btn ${e.tookProbiotic === false ? "no" : ""}" onclick="updateEntry('tookProbiotic',false)">Missed</button></div></div>`;
 
